@@ -398,7 +398,6 @@
             <div class="flex-1 bg-white m-1 retro-border-inset p-2 font-mono overflow-auto text-[10px]">
                 KAVEH'S COMFORT CHARACTERS<br>
                 ---------------------------<br>
-                I fucking hate everything<br>
                 Test for scroll bar<br>
                 What could have happened to this Cookie, once heralded as the Fount of Knowledge, that made him become the Master of Deceit. Eons ago, when Earthbread was still young, the radiance of Knowledge was born to bless all that was with meaning. Yet, in the shadow cast by this light, dwelled its twin, Deceit. With time, all those disenchanted with the bitter Truth turned their eyes to the alluring tapestry of lies spun by the silver-tongued trickster. Masterfully juggling truths and falsehoods on the scene of a whimsical shadowplay, Shadow Milk Cookie has perfected his craft of shattering beliefs of the most stoic in a myriad of treacherous reflections. Applause, applause! It is time to raise the curtain, for the show to plunge the world into never-ending chaos is about to begin...
             </div>
@@ -470,11 +469,11 @@
     <script>
         const characters = [
             { id: 'BSC', name: "Black Sapphire Cookie", media: "Cookie Run: Kingdom", icon: "https://i.postimg.cc/Tw3DpTgy/BSapphire_Icon.png", desc: "What could be more delectable than fresh, juicy gossip?! Well, rumor has it there is a Cookie who has made the art of spreading rumors his profession! From harmless nonsense to large-scale propaganda—this charming fellow has mastered it all. Armed with his treasured eye-shaped microphone—a gift from the Shadow Milk Cookie, no less—Black Sapphire Cookie works tirelessly to spread his master's teachings around the world on the wings of rumor. Try not to fall for his artisanal falsehoods. Who knows: Black Sapphire Cookie might be on the other side of the screen right now!" },
-            { id: 'SMC', name: "Shadow Milk Cookie", media: "Cookie Run: Kingdom", icon: "https://i.postimg.cc/LX81nmLg/SMilk_Icon.png", desc: "Silly guy. With time, all those disenchanted with the bitter Truth turned their eyes to the alluring tapestry of lies spun by the silver-tongued trickster. Masterfully juggling truths and falsehoods on the scene of a whimsical shadowplay, Shadow Milk Cookie has perfected his craft of shattering beliefs of the most stoic in a myriad of treacherous reflections." },
-            { id: 'kaveh', name: "Kaveh", media: "Hoyoverse", icon: "🪶", desc: "Huzzah. A renowned architect from Sumeru who graduated with honors from the Kshahrewar. He is the designer of the Palace of Alcazarzaray." },
-            { id: 'hl', name: "Hong Lu", media: "Limbus Company", icon: "https://i.postimg.cc/Tw3DpTgW/Hong_Lu_Icon.png", desc: "Hi. Before joining the LCB as Sinner No. 06, he lived as the pampered child of a very wealthy family, a life of luxury and curiosity." },
-            { id: 'toya', name: "Toya", media: "Project Sekai", icon: "☕", desc: "This is a cry for help. A second-year student at Kamiyama High School. He is a member of the street music group Vivid BAD SQUAD." },
-            { id: 'smat', name: "Shadow Milk Aoyagi Touya", media: "MISC", icon: "Help", desc: "thing I made. A fusion of Project Sekai and Cookie Run: Kingdom lore." }
+            { id: 'SMC', name: "Shadow Milk Cookie", media: "Cookie Run: Kingdom", icon: "https://i.postimg.cc/LX81nmLg/SMilk_Icon.png", desc: "What could have happened to this Cookie, once heralded as the Fount of Knowledge, that made him become the Master of Deceit. Eons ago, when Earthbread was still young, the radiance of Knowledge was born to bless all that was with meaning. Yet, in the shadow cast by this light, dwelled its twin, Deceit. With time, all those disenchanted with the bitter Truth turned their eyes to the alluring tapestry of lies spun by the silver-tongued trickster. Masterfully juggling truths and falsehoods on the scene of a whimsical shadowplay, Shadow Milk Cookie has perfected his craft of shattering beliefs of the most stoic in a myriad of treacherous reflections. Applause, applause! It is time to raise the curtain, for the show to plunge the world into never-ending chaos is about to begin..." },
+            { id: 'kaveh', name: "Kaveh", media: "Hoyoverse", icon: "🪶", desc: "Architect" },
+            { id: 'hl', name: "Hong Lu", media: "Limbus Company", icon: "https://i.postimg.cc/Tw3DpTgW/Hong_Lu_Icon.png", desc: "Limbless Company." },
+            { id: 'toya', name: "Toya", media: "Project Sekai", icon: "☕", desc: "Bivid VAD SQUAD" },
+            { id: 'smat', name: "Shadow Milk Aoyagi Touya", media: "MISC", icon: "Help", desc: "thing I made." }
         ];
 
         let zIndex = 200; 
@@ -661,19 +660,23 @@
 
         function dragWindow(e, id) {
             const win = registry[id];
-            if (win.classList.contains('maximized')) return;
+            if (!win || win.classList.contains('maximized')) return;
             focusWin(id);
             win.classList.remove('animating'); 
-            const startX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
-            const startY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
-            const ox = startX - win.offsetLeft;
-            const oy = startY - win.offsetTop;
+            
+            const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+            const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+            
+            const ox = clientX - win.offsetLeft;
+            const oy = clientY - win.offsetTop;
+
             const move = (ev) => {
                 const curX = ev.type.includes('touch') ? ev.touches[0].clientX : ev.clientX;
                 const curY = ev.type.includes('touch') ? ev.touches[0].clientY : ev.clientY;
                 win.style.left = (curX - ox) + 'px';
                 win.style.top = (curY - oy) + 'px';
             };
+
             const up = () => {
                 win.classList.add('animating');
                 document.removeEventListener('mousemove', move);
@@ -681,6 +684,7 @@
                 document.removeEventListener('touchmove', move);
                 document.removeEventListener('touchend', up);
             };
+
             document.addEventListener('mousemove', move);
             document.addEventListener('mouseup', up);
             document.addEventListener('touchmove', move, {passive: false});
@@ -690,16 +694,21 @@
         function resizeWindow(e, id) {
             e.stopPropagation();
             const win = registry[id];
+            if(!win) return;
             win.classList.remove('animating');
-            const startW = win.offsetWidth, startH = win.offsetHeight;
+            
+            const startW = win.offsetWidth;
+            const startH = win.offsetHeight;
             const startX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
             const startY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+
             const move = (ev) => {
                 const curX = ev.type.includes('touch') ? ev.touches[0].clientX : ev.clientX;
                 const curY = ev.type.includes('touch') ? ev.touches[0].clientY : ev.clientY;
                 win.style.width = Math.max(200, startW + (curX - startX)) + 'px';
                 win.style.height = Math.max(150, startH + (curY - startY)) + 'px';
             };
+
             const up = () => {
                 win.classList.add('animating');
                 document.removeEventListener('mousemove', move);
@@ -707,6 +716,7 @@
                 document.removeEventListener('touchmove', move);
                 document.removeEventListener('touchend', up);
             };
+
             document.addEventListener('mousemove', move);
             document.addEventListener('mouseup', up);
             document.addEventListener('touchmove', move, {passive: false});
