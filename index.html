@@ -300,6 +300,10 @@
                     <img src="https://i.postimg.cc/PqS3vFg9/directory_closed_4.png" class="w-8 h-8 pointer-events-none">
                     <span>MISC</span>
                 </div>
+                <div id="icon-wallpaper" class="desktop-icon" onmousedown="handleIconInteraction(event, 'win-display')" ontouchstart="handleIconInteraction(event, 'win-display')">
+                    <img src="https://i.postimg.cc/BQb299x6/display-properties-5.png" class="w-8 h-8 pointer-events-none">
+                    <span>Wallpaper</span>
+                </div>
                 <div id="icon-music" class="desktop-icon" onmousedown="handleIconInteraction(event, 'win-music')" ontouchstart="handleIconInteraction(event, 'win-music')">
                     <img src="https://i.postimg.cc/7PGsb9KY/cd_audio_cd_a_4.png" class="w-8 h-8 pointer-events-none">
                     <span>CD Player</span>
@@ -407,6 +411,53 @@
         </div>
     </div>
 
+    <!-- DISPLAY PROPERTIES  -->
+    <div id="win-display" class="window window-border hidden opening animating" style="top: 150px; left: 40px; width: 320px;" onmousedown="focusWin('win-display')">
+        <div class="title-bar" onmousedown="dragWindow(event, 'win-display')" ontouchstart="dragWindow(event, 'win-display')">
+                <div class="flex items-center gap-1">
+                    <img src="https://i.postimg.cc/BQb299x6/display_properties_5.png" class="w-4 h-4 win-icon-img">
+                    <span class="win-title-text">Display Properties</span>
+                </div>
+            <div class="flex gap-1">
+                <button class="btn-border w-4 h-4 text-[10px] pb-1 font-bold" onclick="minimizeWin('win-display')">_</button>
+                <button class="btn-border w-4 h-4 text-[10px] font-bold" onclick="closeWin('win-display')">×</button>
+            </div>
+        </div>
+        <div class="p-4 bg-gray-200 space-y-4">
+            <div class="flex flex-col items-center">
+                <!-- PREVIEW -->
+                <div class="w-48 h-32 retro-border-inset bg-teal-800 relative overflow-hidden flex items-center justify-center">
+                    <div id="wallpaper-preview" class="w-full h-full bg-cover bg-center"></div>
+                        <img src="https://i.postimg.cc/Y9VdbLqP/computer_explorer_5.png" class="absolute w-8 opacity-50">
+                </div>
+            </div>
+            <div class="space-y-1">
+                <label class="text-[11px]">Background <u>W</u>allpaper:</label>
+                <!-- IMAGES -->
+                    <div class="flex gap-2">
+                    <select id="wallpaper-select" class="retro-select flex-1 h-6 min-w-0" onchange="previewWallpaper(this.value)">
+                        <option value="none">Windows Default (Teal)</option>
+                        <option value="https://i.postimg.cc/Pf38M3BC/A_Rush_Of_Excitement.png">A Rush of Excitement</option>
+                        <option value="https://i.postimg.cc/3NR0TmDr/A_Step_Toward_One_s_Dream.png">A Step Toward One's Dream</option>
+                        <option value="https://i.postimg.cc/cHJLgZ1h/Beacon_of_Truth.png">Beacon of Truth</option>
+                        <option value="https://i.postimg.cc/5tgt2jJ1/Cutscene_beast_episode07_011.png">Beast Yeast 7-11 Cutscene</option>
+                        <option value="https://i.postimg.cc/L5Y4DT19/Cutscene_beast_episode08_03.png">Beast Yeast 8-3 Cutscene</option>
+                        <option value="https://i.postimg.cc/yNjN8WKk/Deceitful_Trio.png"> Deceitful Trio</option>
+                        <option value="https://i.postimg.cc/fW20v269/My_Shackles_Are_The_Key.png">My Shackles Are The Key</option>
+                        <option value="https://i.postimg.cc/63Qp2w6M/Smilk.png">Shadow Milk Cookie</option>
+                        <option value="https://i.postimg.cc/xCd1JYjg/Spire_of_Shadows.png">Spire of Shadows</option>
+                        <option value="https://i.postimg.cc/XNHygHT9/The_Reason_For_His_Words.png">The Reason For His Words</option>
+                    </select>
+                    <button class="btn-border h-6 px-2 w-20 text-[10px]" onclick="randomizeWallpaper()">🎲 Random</button>
+                </div>
+            </div>
+            <div class="flex justify-end gap-2 mt-4">
+                <button class="btn-border h-6 w-20 font-bold" onclick="applyWallpaper()">OK</button>
+                <button class="btn-border h-6 w-20" onclick="closeWin('win-display')">Cancel</button>
+            </div>
+        </div>
+    </div>
+
     <!-- WINDOWS STUFF -->
     <template id="folder-tpl">
         <div class="window window-border opening animating">
@@ -418,7 +469,7 @@
                     <button class="win-close btn-border w-4 h-4 text-[10px] font-bold">×</button>
                 </div>
             </div>
-            <div class="flex-1 bg-white m-1 retro-border-inset p-2 grid grid-cols-3 content-start gap-2 overflow-auto win-grid"></div>
+            <div class="flex-1 bg-white m-1 retro-border-inset p-2 flex flex-wrap content-start gap-3 overflow-auto win-grid"></div>
             <div class="resizer"></div>
         </div>
     </template>
@@ -474,7 +525,11 @@
             { id: 'SMC', name: "Shadow Milk Cookie", media: "Cookie Run: Kingdom", icon: "https://i.postimg.cc/LX81nmLg/SMilk_Icon.png", desc: "What could have happened to this Cookie, once heralded as the Fount of Knowledge, that made him become the Master of Deceit. Eons ago, when Earthbread was still young, the radiance of Knowledge was born to bless all that was with meaning. Yet, in the shadow cast by this light, dwelled its twin, Deceit. With time, all those disenchanted with the bitter Truth turned their eyes to the alluring tapestry of lies spun by the silver-tongued trickster. Masterfully juggling truths and falsehoods on the scene of a whimsical shadowplay, Shadow Milk Cookie has perfected his craft of shattering beliefs of the most stoic in a myriad of treacherous reflections. Applause, applause! It is time to raise the curtain, for the show to plunge the world into never-ending chaos is about to begin..." },
             { id: 'kaveh', name: "Kaveh", media: "Hoyoverse", icon: "🪶", desc: "Architect" },
             { id: 'hl', name: "Hong Lu", media: "Limbus Company", icon: "https://i.postimg.cc/Tw3DpTgW/Hong_Lu_Icon.png", desc: "Limbless Company." },
-            { id: 'toya', name: "Toya", media: "Project Sekai", icon: "☕", desc: "Bivid VAD SQUAD" },
+            { id: 'hl', name: "Yi Sang", media: "Limbus Company", icon: "https://i.postimg.cc/RFP2PJ5v/Yi_Sang_Icon.png", desc: "Limbless Company." },
+            { id: 'toya', name: "Aoyagi Toya", media: "Project Sekai", icon: "https://i.postimg.cc/fTbRTYTH/Toya_Stamp.png", desc: "Bivid VAD SQUAD" },
+            { id: 'rui', name: "Kamishiro Rui", media: "Project Sekai", icon: "https://i.postimg.cc/6p26CwZ8/Rui_Stamp.png", desc: "Shonderlands x Wowtime"},
+            { id: 'toya', name: "Shinonome Akito", media: "Project Sekai", icon: "https://i.postimg.cc/MG1WrDtD/Akito_Stamp.png", desc: "Bivid VAD SQUAD" },
+            { id: 'rui', name: "Tenma Tsukasa", media: "Project Sekai", icon: "https://i.postimg.cc/P5gX4cbZ/Tsukasa_Stamp.png", desc: "Shonderlands x Wowtime"},
             { id: 'smat', name: "Shadow Milk Aoyagi Touya", media: "MISC", icon: "Help", desc: "thing I made." }
         ];
 
@@ -566,7 +621,7 @@
         }
 
         function openFolder(type) {
-            const id = 'folder-' + type.toLowerCase();
+            const id = 'folder-' + type.replace(/[^a-zA-Z]/g, '').toLowerCase();
             if (registry[id]) { 
                 if (registry[id].classList.contains('minimized')) registry[id].classList.remove('minimized');
                 focusWin(id); 
@@ -574,7 +629,7 @@
             }
             const tpl = document.getElementById('folder-tpl').content.cloneNode(true);
             const win = tpl.querySelector('.window');
-            win.id = id; win.style.top = '100px'; win.style.left = '100px'; win.style.width = '300px'; win.style.height = '200px';
+            win.id = id; win.style.top = '100px'; win.style.left = '100px'; win.style.width = '300px'; win.style.height = '240px';
             win.querySelector('.win-title').innerText = type;
             win.querySelector('.win-close').onclick = () => closeWin(id);
             win.querySelector('.win-min').onclick = () => minimizeWin(id);
@@ -586,8 +641,8 @@
             const grid = win.querySelector('.win-grid');
             characters.filter(c => c.media === type).forEach(c => {
                 const item = document.createElement('div');
-                item.className = 'flex flex-col items-center p-1 cursor-pointer hover:bg-blue-800 hover:text-white rounded';
-                item.innerHTML = `${renderIcon(c.icon, "w-8 h-8")}<span class="text-[10px] text-center mt-1">${c.name}</span>`;
+                item.className = 'flex flex-col items-center w-16 p-1 cursor-pointer hover:bg-blue-800 hover:text-white rounded text-center';
+                item.innerHTML = `${renderIcon(c.icon, "w-8 h-8")}<span class="text-[10px] w-full mt-1 leading-tight break-words">${c.name}</span>`;
                 item.onclick = (e) => { e.stopPropagation(); openProfile(c); };
                 grid.appendChild(item);
             });
@@ -595,6 +650,7 @@
             registry[id] = win;
             requestAnimationFrame(() => win.classList.remove('opening'));
             focusWin(id);
+            updateTaskbar();
         }
 
         function openProfile(char) {
@@ -609,11 +665,9 @@
             win.id = id; win.style.top = '120px'; win.style.left = '150px';
             win.querySelector('.win-title').innerText = char.name + " - Bio";
             
-            // Set Dynamic Icon in Title Bar
             const titleIcon = win.querySelector('.win-icon');
             titleIcon.innerHTML = renderIcon(char.icon, "w-4 h-4 text-xs win-icon-img");
             
-            // Set Content
             win.querySelector('.char-icon').innerHTML = renderIcon(char.icon, "w-16 h-16 text-5xl");
             win.querySelector('.char-name').innerText = char.name;
             win.querySelector('.char-desc').innerText = char.desc;
@@ -729,12 +783,9 @@
                 if (win.classList.contains('hidden')) return;
                 const isActive = win.classList.contains('active-win');
                 const titleText = win.querySelector('.win-title-text').innerText;
-                
-                // Get the correct icon HTML for taskbar
                 let iconHtml = '';
                 const titleIconSpan = win.querySelector('.win-icon');
                 if (titleIconSpan && titleIconSpan.innerHTML.trim() !== "") {
-                    // Clone the icon from the title bar for consistency
                     iconHtml = titleIconSpan.innerHTML.replace('w-4 h-4', 'w-3 h-3').replace('text-xs', 'text-[10px]');
                 } else {
                     const iconImg = win.querySelector('.win-icon-img');
@@ -758,7 +809,7 @@
             });
         }
 
-        // CD PLAYER LOGIC
+        // CD PLAYER
         function setVolume(v) { audio.volume = v; }
         
         function formatTime(seconds) {
@@ -853,6 +904,37 @@
             openWindow('win-music');
             openWindow('win-about');
         };
+
+        // WALLPAPER
+        function previewWallpaper(url) {
+            const preview = document.getElementById('wallpaper-preview');
+            preview.style.backgroundImage = url === 'none' ? 'none' : `url('${url}')`;
+            preview.style.backgroundSize = "cover";
+        }
+
+        function applyWallpaper() {
+            const url = document.getElementById('wallpaper-select').value;
+            if (url === 'none') {
+                document.body.style.backgroundImage = 'none';
+                document.body.style.backgroundColor = "var(--bg-teal)";
+            } else {
+                document.body.style.backgroundImage = `url('${url}')`;
+                document.body.style.backgroundSize = "cover";
+                document.body.style.backgroundRepeat = "no-repeat";
+                document.body.style.backgroundAttachment = "fixed";
+                document.body.style.backgroundPosition = "center center";
+            }
+            closeWin('win-display');
+        }
+
+        function randomizeWallpaper() {
+            const select = document.getElementById('wallpaper-select');
+            const opts = Array.from(select.options).filter(o => o.value !== 'none');
+            const rand = opts[Math.floor(Math.random() * opts.length)];
+            select.value = rand.value;
+            previewWallpaper(rand.value);
+            applyWallpaper();
+        }
     </script>
 </body>
 </html>
