@@ -39,6 +39,7 @@
             border: 1px solid var(--win-border-light);
             border-right-color: var(--win-border-dark);
             border-bottom-color: var(--win-border-dark);
+            overflow: hidden;
         }
 
         .btn-border {
@@ -84,6 +85,7 @@
             height: 18px;
             margin: 2px;
             cursor: default;
+            flex-shrink: 0;
         }
 
         .window.active-win .title-bar {
@@ -423,18 +425,18 @@
     <template id="profile-tpl">
         <div class="window window-border opening animating" style="width: 280px; height: 350px;">
             <div class="title-bar">
-                <div class="flex items-center gap-1"><span class="win-icon">👤</span> <span class="win-title-text win-title">Bio</span></div>
+                <div class="flex items-center gap-1"><span class="win-icon"></span> <span class="win-title-text win-title">Bio</span></div>
                 <div class="flex gap-1">
                     <button class="win-min btn-border w-4 h-4 text-[10px] pb-1 font-bold">_</button>
                     <button class="win-max btn-border w-4 h-4 text-[10px] font-bold">□</button>
                     <button class="win-close btn-border w-4 h-4 text-[10px] font-bold">×</button>
                 </div>
             </div>
-            <div class="flex-1 bg-[#c0c0c0] p-2">
-                <div class="retro-border-inset bg-white h-full p-4 flex flex-col items-center overflow-auto">
-                    <div class="text-6xl mb-4 char-icon"></div>
-                    <h2 class="text-xl font-bold char-name mb-2"></h2>
-                    <p class="text-sm char-desc text-center"></p>
+            <div class="flex-1 bg-[#c0c0c0] p-1 flex flex-col overflow-hidden">
+                <div class="retro-border-inset bg-white flex-1 p-4 flex flex-col items-center overflow-y-auto overflow-x-hidden">
+                    <div class="mb-4 char-icon flex-shrink-0 min-h-[64px]"></div>
+                    <h2 class="text-xl font-bold char-name mb-2 flex-shrink-0 text-center"></h2>
+                    <p class="text-sm char-desc text-center w-full break-words"></p>
                 </div>
             </div>
             <div class="resizer"></div>
@@ -467,12 +469,12 @@
 
     <script>
         const characters = [
-            { id: 'BSC', name: "Black Sapphire Cookie", media: "Cookie Run: Kingdom", icon: "https://i.postimg.cc/Tw3DpTgy/BSapphire_Icon.png", desc: "I give up" },
-            { id: 'SMC', name: "Shadow Milk Cookie", media: "Cookie Run: Kingdom", icon: "https://i.postimg.cc/LX81nmLg/SMilk_Icon.png", desc: "Silly guy" },
-            { id: 'kaveh', name: "Kaveh", media: "Hoyoverse", icon: "🪶", desc: "Huzzah" },
-            { id: 'hl', name: "Hong Lu", media: "Limbus Company", icon: "https://i.postimg.cc/Tw3DpTgW/Hong_Lu_Icon.png", desc: "Hi." },
-            { id: 'toya', name: "Toya", media: "Project Sekai", icon: "☕", desc: "This is a cry for help" },
-            { id: 'smat', name: "Shadow Milk Aoyagi Touya", media: "MISC", icon: "Help", desc: "thing I made" }
+            { id: 'BSC', name: "Black Sapphire Cookie", media: "Cookie Run: Kingdom", icon: "https://i.postimg.cc/Tw3DpTgy/BSapphire_Icon.png", desc: "What could be more delectable than fresh, juicy gossip?! Well, rumor has it there is a Cookie who has made the art of spreading rumors his profession! From harmless nonsense to large-scale propaganda—this charming fellow has mastered it all. Armed with his treasured eye-shaped microphone—a gift from the Shadow Milk Cookie, no less—Black Sapphire Cookie works tirelessly to spread his master's teachings around the world on the wings of rumor. Try not to fall for his artisanal falsehoods. Who knows: Black Sapphire Cookie might be on the other side of the screen right now!" },
+            { id: 'SMC', name: "Shadow Milk Cookie", media: "Cookie Run: Kingdom", icon: "https://i.postimg.cc/LX81nmLg/SMilk_Icon.png", desc: "Silly guy. With time, all those disenchanted with the bitter Truth turned their eyes to the alluring tapestry of lies spun by the silver-tongued trickster. Masterfully juggling truths and falsehoods on the scene of a whimsical shadowplay, Shadow Milk Cookie has perfected his craft of shattering beliefs of the most stoic in a myriad of treacherous reflections." },
+            { id: 'kaveh', name: "Kaveh", media: "Hoyoverse", icon: "🪶", desc: "Huzzah. A renowned architect from Sumeru who graduated with honors from the Kshahrewar. He is the designer of the Palace of Alcazarzaray." },
+            { id: 'hl', name: "Hong Lu", media: "Limbus Company", icon: "https://i.postimg.cc/Tw3DpTgW/Hong_Lu_Icon.png", desc: "Hi. Before joining the LCB as Sinner No. 06, he lived as the pampered child of a very wealthy family, a life of luxury and curiosity." },
+            { id: 'toya', name: "Toya", media: "Project Sekai", icon: "☕", desc: "This is a cry for help. A second-year student at Kamiyama High School. He is a member of the street music group Vivid BAD SQUAD." },
+            { id: 'smat', name: "Shadow Milk Aoyagi Touya", media: "MISC", icon: "Help", desc: "thing I made. A fusion of Project Sekai and Cookie Run: Kingdom lore." }
         ];
 
         let zIndex = 200; 
@@ -556,72 +558,78 @@
         }
 
         function renderIcon(iconData, className = "w-8 h-8") {
-        if (iconData.startsWith('http') || iconData.startsWith('./') || iconData.startsWith('data:')) {
-            return `<img src="${iconData}" class="${className} object-contain">`;
-        }
-        return `<div class="${className} flex items-center justify-center text-2xl">${iconData}</div>`;
+            if (iconData.startsWith('http') || iconData.startsWith('./') || iconData.startsWith('data:')) {
+                return `<img src="${iconData}" class="${className} object-contain pointer-events-none">`;
+            }
+            return `<div class="${className} flex items-center justify-center pointer-events-none">${iconData}</div>`;
         }
 
         function openFolder(type) {
-        const id = 'folder-' + type.toLowerCase();
-        if (registry[id]) { 
-            if (registry[id].classList.contains('minimized')) registry[id].classList.remove('minimized');
-            focusWin(id); 
-            return; 
-        }
-        const tpl = document.getElementById('folder-tpl').content.cloneNode(true);
-        const win = tpl.querySelector('.window');
-        win.id = id; win.style.top = '100px'; win.style.left = '100px'; win.style.width = '300px'; win.style.height = '200px';
-        win.querySelector('.win-title').innerText = type;
-        win.querySelector('.win-close').onclick = () => closeWin(id);
-        win.querySelector('.win-min').onclick = () => minimizeWin(id);
-        win.querySelector('.win-max').onclick = () => toggleMaximize(id);
-        win.querySelector('.resizer').onmousedown = (e) => resizeWindow(e, id);
-        win.onmousedown = () => focusWin(id);
-        win.querySelector('.title-bar').onmousedown = (e) => dragWindow(e, id);
+            const id = 'folder-' + type.toLowerCase();
+            if (registry[id]) { 
+                if (registry[id].classList.contains('minimized')) registry[id].classList.remove('minimized');
+                focusWin(id); 
+                return; 
+            }
+            const tpl = document.getElementById('folder-tpl').content.cloneNode(true);
+            const win = tpl.querySelector('.window');
+            win.id = id; win.style.top = '100px'; win.style.left = '100px'; win.style.width = '300px'; win.style.height = '200px';
+            win.querySelector('.win-title').innerText = type;
+            win.querySelector('.win-close').onclick = () => closeWin(id);
+            win.querySelector('.win-min').onclick = () => minimizeWin(id);
+            win.querySelector('.win-max').onclick = () => toggleMaximize(id);
+            win.querySelector('.resizer').onmousedown = (e) => resizeWindow(e, id);
+            win.onmousedown = () => focusWin(id);
+            win.querySelector('.title-bar').onmousedown = (e) => dragWindow(e, id);
 
-        const grid = win.querySelector('.win-grid');
-        characters.filter(c => c.media === type).forEach(c => {
-            const item = document.createElement('div');
-            item.className = 'flex flex-col items-center p-1 cursor-pointer hover:bg-blue-800 hover:text-white rounded';
-            item.innerHTML = `${renderIcon(c.icon)}<span class="text-[10px] text-center mt-1">${c.name}</span>`;
-            item.onclick = (e) => { e.stopPropagation(); openProfile(c); };
-            grid.appendChild(item);
-        });
-        document.getElementById('desktop').appendChild(win);
-        registry[id] = win;
-        requestAnimationFrame(() => win.classList.remove('opening'));
-        focusWin(id);
-    }
+            const grid = win.querySelector('.win-grid');
+            characters.filter(c => c.media === type).forEach(c => {
+                const item = document.createElement('div');
+                item.className = 'flex flex-col items-center p-1 cursor-pointer hover:bg-blue-800 hover:text-white rounded';
+                item.innerHTML = `${renderIcon(c.icon, "w-8 h-8")}<span class="text-[10px] text-center mt-1">${c.name}</span>`;
+                item.onclick = (e) => { e.stopPropagation(); openProfile(c); };
+                grid.appendChild(item);
+            });
+            document.getElementById('desktop').appendChild(win);
+            registry[id] = win;
+            requestAnimationFrame(() => win.classList.remove('opening'));
+            focusWin(id);
+        }
 
         function openProfile(char) {
-        const id = 'profile-' + char.id;
-        if (registry[id]) { 
-            if (registry[id].classList.contains('minimized')) registry[id].classList.remove('minimized');
-            focusWin(id); 
-            return; 
-        }
-        const tpl = document.getElementById('profile-tpl').content.cloneNode(true);
-        const win = tpl.querySelector('.window');
-        win.id = id; win.style.top = '120px'; win.style.left = '150px';
-        win.querySelector('.win-title').innerText = char.name + " - Bio";
-        
-        win.querySelector('.char-icon').innerHTML = renderIcon(char.icon, "w-16 h-16 text-5xl");
-        win.querySelector('.char-name').innerText = char.name;
-        win.querySelector('.char-desc').innerText = char.desc;
-        
-        win.querySelector('.win-close').onclick = () => closeWin(id);
-        win.querySelector('.win-min').onclick = () => minimizeWin(id);
-        win.querySelector('.win-max').onclick = () => toggleMaximize(id);
-        win.querySelector('.resizer').onmousedown = (e) => resizeWindow(e, id);
-        win.onmousedown = () => focusWin(id);
-        win.querySelector('.title-bar').onmousedown = (e) => dragWindow(e, id);
+            const id = 'profile-' + char.id;
+            if (registry[id]) { 
+                if (registry[id].classList.contains('minimized')) registry[id].classList.remove('minimized');
+                focusWin(id); 
+                return; 
+            }
+            const tpl = document.getElementById('profile-tpl').content.cloneNode(true);
+            const win = tpl.querySelector('.window');
+            win.id = id; win.style.top = '120px'; win.style.left = '150px';
+            win.querySelector('.win-title').innerText = char.name + " - Bio";
+            
+            // Set Dynamic Icon in Title Bar
+            const titleIcon = win.querySelector('.win-icon');
+            titleIcon.innerHTML = renderIcon(char.icon, "w-4 h-4 text-xs win-icon-img");
+            
+            // Set Content
+            win.querySelector('.char-icon').innerHTML = renderIcon(char.icon, "w-16 h-16 text-5xl");
+            win.querySelector('.char-name').innerText = char.name;
+            win.querySelector('.char-desc').innerText = char.desc;
+            
+            win.querySelector('.win-close').onclick = () => closeWin(id);
+            win.querySelector('.win-min').onclick = () => minimizeWin(id);
+            win.querySelector('.win-max').onclick = () => toggleMaximize(id);
+            win.querySelector('.resizer').onmousedown = (e) => resizeWindow(e, id);
+            win.onmousedown = () => focusWin(id);
+            win.querySelector('.title-bar').onmousedown = (e) => dragWindow(e, id);
 
-        document.getElementById('desktop').appendChild(win);
-        registry[id] = win;
-        requestAnimationFrame(() => win.classList.remove('opening'));
-        focusWin(id);
-    }
+            document.getElementById('desktop').appendChild(win);
+            registry[id] = win;
+            requestAnimationFrame(() => win.classList.remove('opening'));
+            focusWin(id);
+            updateTaskbar();
+        }
 
         function focusWin(id) {
             Object.values(registry).forEach(w => w.classList.remove('active-win'));
@@ -680,7 +688,6 @@
         }
 
         function resizeWindow(e, id) {
-            if (id === 'win-music') return;
             e.stopPropagation();
             const win = registry[id];
             win.classList.remove('animating');
@@ -713,26 +720,25 @@
                 if (win.classList.contains('hidden')) return;
                 const isActive = win.classList.contains('active-win');
                 const titleText = win.querySelector('.win-title-text').innerText;
-                let iconHtml = '';
-                const iconImg = win.querySelector('.win-icon-img');
-                const charIconContainer = win.querySelector('.char-icon');
                 
-                if (charIconContainer) {
-                    const charData = characters.find(c => id === 'profile-' + c.id);
-                    if (charData) {
-                        iconHtml = renderIcon(charData.icon, "w-3 h-3");
-                    } else {
-                        iconHtml = `<span>👤</span>`;
-                    }
-                } else if (iconImg) {
-                    iconHtml = `<img src="${iconImg.src}" class="w-3 h-3">`;
+                // Get the correct icon HTML for taskbar
+                let iconHtml = '';
+                const titleIconSpan = win.querySelector('.win-icon');
+                if (titleIconSpan && titleIconSpan.innerHTML.trim() !== "") {
+                    // Clone the icon from the title bar for consistency
+                    iconHtml = titleIconSpan.innerHTML.replace('w-4 h-4', 'w-3 h-3').replace('text-xs', 'text-[10px]');
                 } else {
-                    iconHtml = `<span>📁</span>`;
+                    const iconImg = win.querySelector('.win-icon-img');
+                    if (iconImg) {
+                        iconHtml = `<img src="${iconImg.src}" class="w-3 h-3">`;
+                    } else {
+                        iconHtml = `<span>📁</span>`;
+                    }
                 }
                 
                 const btn = document.createElement('button');
                 btn.className = `task-btn ${isActive ? 'active-task' : ''}`;
-                btn.innerHTML = `<div class="flex items-center justify-center w-4">${iconHtml}</div><span class="truncate ml-1">${titleText}</span>`;
+                btn.innerHTML = `<div class="flex items-center justify-center w-4 h-4">${iconHtml}</div><span class="truncate ml-1">${titleText}</span>`;
                 btn.onclick = (e) => {
                     e.stopPropagation();
                     if (win.classList.contains('minimized')) { win.classList.remove('minimized'); focusWin(id); }
@@ -775,17 +781,13 @@
         function playAudio() {
             if (!audio.src || audio.src === window.location.href || audio.src === "") {
                 const select = document.getElementById('cd-track-select');
-                if (select.selectedIndex <= 0 && select.options.length > 1) {
-                    select.selectedIndex = 1;
-                }
+                if (select.selectedIndex <= 0 && select.options.length > 1) select.selectedIndex = 1;
                 const selected = select.options[select.selectedIndex];
                 if (selected && selected.value !== 'none') {
                     audio.src = selected.getAttribute('data-url');
                     document.getElementById('cd-artist').innerText = selected.getAttribute('data-artist');
                     document.getElementById('cd-title').innerText = selected.getAttribute('data-title');
-                } else {
-                    return;
-                }
+                } else return;
             }
             
             audio.play().then(() => {
