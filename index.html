@@ -86,6 +86,7 @@
             margin: 2px;
             cursor: default;
             flex-shrink: 0;
+            touch-action: none;
         }
 
         .window.active-win .title-bar {
@@ -192,9 +193,10 @@
         }
 
         .resizer {
-            width: 12px; height: 12px; position: absolute; right: 2px; bottom: 2px;
+            width: 16px; height: 16px; position: absolute; right: 0; bottom: 0;
             cursor: nwse-resize; z-index: 20;
             background: linear-gradient(135deg, transparent 50%, var(--win-border-dark) 50%, var(--win-border-dark) 60%, transparent 60%, transparent 70%, var(--win-border-dark) 70%);
+            touch-action: none;
         }
 
         .hidden { display: none !important; }
@@ -664,11 +666,10 @@
             focusWin(id);
             win.classList.remove('animating'); 
             
-            const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
-            const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
-            
-            const ox = clientX - win.offsetLeft;
-            const oy = clientY - win.offsetTop;
+            const startX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+            const startY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+            const ox = startX - win.offsetLeft;
+            const oy = startY - win.offsetTop;
 
             const move = (ev) => {
                 const curX = ev.type.includes('touch') ? ev.touches[0].clientX : ev.clientX;
@@ -687,16 +688,14 @@
 
             document.addEventListener('mousemove', move);
             document.addEventListener('mouseup', up);
-            document.addEventListener('touchmove', move, {passive: false});
+            document.addEventListener('touchmove', move, { passive: false });
             document.addEventListener('touchend', up);
         }
 
         function resizeWindow(e, id) {
             e.stopPropagation();
             const win = registry[id];
-            if(!win) return;
             win.classList.remove('animating');
-            
             const startW = win.offsetWidth;
             const startH = win.offsetHeight;
             const startX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
@@ -719,7 +718,7 @@
 
             document.addEventListener('mousemove', move);
             document.addEventListener('mouseup', up);
-            document.addEventListener('touchmove', move, {passive: false});
+            document.addEventListener('touchmove', move, { passive: false });
             document.addEventListener('touchend', up);
         }
 
