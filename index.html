@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Kaveh's Comfort Characters</title>
+    <link rel="icon" type="image/png" href="https://i.postimg.cc/P5qtkxDF/Touya_Icon.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --bg-teal: #008080;
+            --win-gray: #c0c0c0;
+            --win-border-light: #ffffff;
+            --win-border-dark: #808080;
+            --win-border-black: #000000;
+            --win-blue: #000080;
+            --win-blue-light: #1084d0;
+            --win-gray-dark: #707070;
+            --sel-blue: #000080;
+        }
+
+        body {
+            background-color: var(--bg-teal);
+            font-family: 'Tahoma', sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            user-select: none;
+            margin: 0;
+            font-size: 11px;
+            touch-action: none;
+        }
+
+        /* WINDOW */
+        .window-border {
+            box-shadow: inset 1px 1px 0px var(--win-border-light), 
+                        inset -1px -1px 0px var(--win-border-dark),
+                        1px 1px 0px var(--win-border-black);
+            background-color: var(--win-gray);
+            border: 1px solid var(--win-border-light);
+            border-right-color: var(--win-border-dark);
+            border-bottom-color: var(--win-border-dark);
+        }
+
+        .btn-border {
+            box-shadow: inset 1px 1px 0px var(--win-border-light), 
+                        inset -1px -1px 0px var(--win-border-dark),
+                        1px 1px 0px var(--win-border-black);
+            background-color: var(--win-gray);
+            border: 1px solid var(--win-border-light);
+            border-right-color: var(--win-border-dark);
+            border-bottom-color: var(--win-border-dark);
+            cursor: pointer;
+            outline: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-border:active:not(:disabled) {
+            box-shadow: inset 1px 1px 0px var(--win-border-black),
+                        inset -1px -1px 0px var(--win-border-light);
+            border: 1px solid var(--win-border-dark);
+            border-right-color: var(--win-border-light);
+            border-bottom-color: var(--win-border-light);
+            padding: 1px 0 0 1px;
+        }
+
+        .retro-border-inset {
+            border: 1px solid var(--win-border-dark);
+            border-right-color: var(--win-border-light);
+            border-bottom-color: var(--win-border-light);
+            box-shadow: inset 1px 1px 0px var(--win-border-black),
+                        1px 1px 0px var(--win-border-light);
+        }
+
+        .title-bar {
+            background: var(--win-gray-dark);
+            color: #d0d0d0;
+            padding: 2px 3px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            height: 18px;
+            margin: 2px;
+            cursor: default;
+        }
+
+        .window.active-win .title-bar {
+            background: linear-gradient(90deg, var(--win-blue), var(--win-blue-light));
+            color: white;
+        }
+
+        /* ANIMATION */
+        .window {
+            position: absolute;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            transform-origin: center center;
+        }
+
+        .window.animating {
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.1), 
+                        opacity 0.2s, top 0.2s, left 0.2s, width 0.2s, height 0.2s;
+        }
+
+        .window.opening { transform: scale(0.85); opacity: 0; }
+        .window.minimized { transform: scale(0.1) translateY(100vh); opacity: 0; pointer-events: none; }
+        .window.maximized { top: 0 !important; left: 0 !important; width: 100vw !important; height: calc(100vh - 30px) !important; transform: scale(1) !important; z-index: 9999 !important; }
+
+        /* CD PLAYER UI */
+        .cd-display {
+            background: #000; color: #ccff00; font-family: 'monospace'; padding: 8px;
+            border: 2px solid var(--win-border-dark); box-shadow: inset 2px 2px 0 #000;
+            min-width: 170px; text-align: center;
+        }
+
+        /* DESKTOP ICON LAYOUT */
+        #desktop-grid {
+            display: grid;
+            grid-auto-flow: column;
+            grid-template-rows: repeat(auto-fill, 90px);
+            grid-template-columns: repeat(auto-fill, 80px);
+            gap: 10px;
+            height: calc(100vh - 40px);
+            width: fit-content;
+            padding: 10px;
+            pointer-events: none;
+        }
+
+        .desktop-icon {
+            width: 75px;
+            height: 85px;
+            text-align: center;
+            cursor: pointer;
+            padding: 4px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 5;
+            pointer-events: auto;
+            touch-action: none;
+        }
+        .desktop-icon span { color: white; padding: 2px 4px; margin-top: 2px; border: 1px solid transparent; text-shadow: 1px 1px 1px black; pointer-events: none; }
+        .desktop-icon.selected span { background-color: var(--sel-blue); border: 1px dotted #ffffff; }
+
+        .taskbar {
+            position: fixed; bottom: 0; left: 0; right: 0; height: 30px;
+            background-color: var(--win-gray); border-top: 1px solid var(--win-border-light);
+            display: flex; align-items: center; padding: 2px; z-index: 99999; box-shadow: inset 1px 1px 0 white;
+        }
+
+        .resizer {
+            width: 12px; height: 12px; position: absolute; right: 2px; bottom: 2px;
+            cursor: nwse-resize; z-index: 20;
+            background: linear-gradient(135deg, transparent 50%, var(--win-border-dark) 50%, var(--win-border-dark) 60%, transparent 60%, transparent 70%, var(--win-border-dark) 70%);
+        }
+
+        .hidden { display: none !important; }
+        select.retro-select {
+            appearance: none; background: white url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10'%3E%3Cpath d='M0 0l5 5 5-5z'/%3E%3C/svg%3E") no-repeat right 5px center;
+            border: 1px solid var(--win-border-dark); box-shadow: inset 1px 1px 0 var(--win-border-black); padding-right: 20px; font-size: 11px;
+        }
+
+        .task-btn {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 0 4px;
+            border: 2px solid;
+            border-color: var(--win-border-light) var(--win-border-dark) var(--win-border-dark) var(--win-border-light);
+            background: var(--win-gray);
+            height: 22px;
+            min-width: 60px;
+            max-width: 150px;
+            font-size: 11px;
+            text-align: left;
+            box-shadow: 1px 1px 0 var(--win-border-black);
+        }
+
+        .task-btn.active-task {
+            border-color: var(--win-border-dark) var(--win-border-light) var(--win-border-light) var(--win-border-dark);
+            background: #e0e0e0;
+            box-shadow: inset 1px 1px 0 var(--win-border-black);
+            font-weight: bold;
+        }
+
+        input[type=range].retro-slider {
+            -webkit-appearance: none; background: transparent; width: 100%;
+        }
+        input[type=range].retro-slider::-webkit-slider-runnable-track {
+            width: 100%; height: 4px; background: #808080; border: 1px solid #fff; border-right-color: #808080; border-bottom-color: #808080;
+            box-shadow: inset 1px 1px 0 #000;
+        }
+        input[type=range].retro-slider::-webkit-slider-thumb {
+            -webkit-appearance: none; height: 16px; width: 8px; background: var(--win-gray); margin-top: -7px;
+            border: 1px solid #fff; border-right-color: #000; border-bottom-color: #000;
+            box-shadow: inset 1px 1px 0 #dfdfdf, 1px 1px 0 #808080;
+        }
+    </style>
+</head>
+<body onclick="hideStartMenu()">
+
+    <div id="desktop" class="relative w-full h-full overflow-hidden" onmousedown="deselectAllIcons(event)" ontouchstart="deselectAllIcons(event)">
+        <!-- ICONS -->
+        <div id="icon-layer" class="absolute inset-0 z-10 pointer-events-none">
+            <div id="desktop-grid">
+                <div id="icon-computer" class="desktop-icon" onmousedown="handleIconInteraction(event, 'win-mycomputer')" ontouchstart="handleIconInteraction(event, 'win-mycomputer')">
+                    <img src="https://i.postimg.cc/Y9VdbLqP/computer_explorer_5.png" class="w-8 h-8 pointer-events-none">
+                    <span>My Computer</span>
+                </div>
+                <div id="icon-about" class="desktop-icon" onmousedown="handleIconInteraction(event, 'win-about')" ontouchstart="handleIconInteraction(event, 'win-about')">
+                    <img src="https://i.postimg.cc/WbcnzvDq/notepad_5.png" class="w-8 h-8 pointer-events-none">
+                    <span>Readme.txt</span>
+                </div>
+                <div id="icon-crk" class="desktop-icon" onmousedown="handleIconInteraction(event, 'Cookie Run: Kingdom', true)" ontouchstart="handleIconInteraction(event, 'Cookie Run: Kingdom', true)">
+                    <img src="https://i.postimg.cc/K8MgC9rW/Cookie_Run_Kingdom.png" class="w-8 h-8 pointer-events-none">
+                    <span>Cookie Run: Kingdom</span>
+                </div>
+                <div id="icon-hoyo" class="desktop-icon" onmousedown="handleIconInteraction(event, 'Hoyoverse', true)" ontouchstart="handleIconInteraction(event, 'Hoyoverse', true)">
+                    <img src="https://i.postimg.cc/7Z2TjBMt/Hoyoverse.png" class="w-8 h-8 pointer-events-none">
+                    <span>Hoyoverse</span>
+                </div>
+                <div id="icon-lcb" class="desktop-icon" onmousedown="handleIconInteraction(event, 'Limbus Company', true)" ontouchstart="handleIconInteraction(event, 'Limbus Company', true)">
+                    <img src="https://i.postimg.cc/t4xV8rtB/Limbus_Company.png" class="w-8 h-8 pointer-events-none">
+                    <span>Limbus Company</span>
+                </div>
+                <div id="icon-pjsk" class="desktop-icon" onmousedown="handleIconInteraction(event, 'Project Sekai', true)" ontouchstart="handleIconInteraction(event, 'Project Sekai', true)">
+                    <img src="https://i.postimg.cc/Z5dyXfF7/Project_Sekai.png" class="w-8 h-8 pointer-events-none">
+                    <span>Project Sekai</span>
+                </div>
+                <div id="icon-misc" class="desktop-icon" onmousedown="handleIconInteraction(event, 'MISC', true)" ontouchstart="handleIconInteraction(event, 'MISC', true)">
+                    <img src="https://i.postimg.cc/PqS3vFg9/directory_closed_4.png" class="w-8 h-8 pointer-events-none">
+                    <span>MISC</span>
+                </div>
+                <div id="icon-music" class="desktop-icon" onmousedown="handleIconInteraction(event, 'win-music')" ontouchstart="handleIconInteraction(event, 'win-music')">
+                    <img src="https://i.postimg.cc/7PGsb9KY/cd_audio_cd_a_4.png" class="w-8 h-8 pointer-events-none">
+                    <span>CD Player</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- CD PLAYER -->
+        <div id="win-music" class="window window-border hidden opening animating" style="top: 100px; left: 200px; width: 360px;" onmousedown="focusWin('win-music')">
+            <div class="title-bar" onmousedown="dragWindow(event, 'win-music')" ontouchstart="dragWindow(event, 'win-music')">
+                <div class="flex items-center gap-1"><span class="win-icon"><img src="https://i.postimg.cc/7PGsb9KY/cd_audio_cd_a_4.png" class="w-4 h-4 win-icon-img"></span> <span class="win-title-text">CD Player</span></div>
+                <div class="flex gap-1">
+                    <button class="btn-border w-4 h-4 text-[10px] pb-1 font-bold" onclick="minimizeWin('win-music')">_</button>
+                    <button class="btn-border w-4 h-4 text-[10px] font-bold" onclick="closeWin('win-music')">×</button>
+                </div>
+            </div>
+            <div class="p-2 space-y-2 bg-gray-200">
+                <div class="flex gap-2">
+                    <div class="cd-display">
+                        <div id="cd-play-indicator" class="text-[9px] h-3 text-left px-1 opacity-0">PLAYING</div>
+                        <div class="text-[20px] font-bold" id="cd-time">[00] 00:00 / 00:00</div>
+                        <div id="cd-error" class="text-[9px] text-red-500 h-3 hidden">LOAD ERROR</div>
+                        <div id="cd-track-count" class="text-[10px] opacity-50">Track 0/0</div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-1 flex-1">
+                        <button class="btn-border h-6 col-span-2 font-bold" id="play-btn" onclick="playAudio()">▶ Play</button>
+                        <button class="btn-border h-6" onclick="pauseAudio()">||</button>
+                        <button class="btn-border h-6" onclick="stopAudio()">■</button>
+                        <button class="btn-border h-6" onclick="prevTrack()">⏮</button>
+                        <button class="btn-border h-6" onclick="nextTrack()">⏭</button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-[50px_1fr] gap-x-2 gap-y-1 items-center text-[11px]">
+                    <span><u>A</u>rtist:</span>
+                    <div class="retro-border-inset bg-white px-1 h-5 overflow-hidden text-[10px]" id="cd-artist">---</div>
+                    <span><u>T</u>itle:</span>
+                    <div class="retro-border-inset bg-white px-1 h-5 overflow-hidden text-[10px]" id="cd-title">---</div>
+                    <span>Trac<u>k</u>:</span>
+                    <select id="cd-track-select" class="retro-select w-full h-5" onchange="changeTrack()">
+                    <option value="none">-- Select Track --</option>
+                    <option value="song1" data-url="https://raw.githubusercontent.com/Asiandra/comfort-characters/main/Music/Beast-Yeast%208.%20Beacon%20of%20Truth.mp3" data-artist="Cookie Run: Kingdom" data-title="Beast Yeast 8. Beacon of Truth">Beast Yeast 8. Beacon of Truth</option>
+                    <option value="song2" data-url="https://raw.githubusercontent.com/Asiandra/comfort-characters/main/Music/Aku%20no%20Taizai%20BGM.mp3" data-artist="Project Sekai" data-title="Aku no Taizai BGM">Aku no Taizai BGM</option>
+                    <option value="song3" data-url="https://raw.githubusercontent.com/Asiandra/comfort-characters/main/Music/Bgm_street_sekai.mp3" data-artist="Project Sekai" data-title="Street Sekai BGM">Street Sekai BGM</option>
+                    <option value="song4" data-url="https://raw.githubusercontent.com/Asiandra/comfort-characters/main/Music/Greed.mp3" data-artist="Marino" data-title="Greed">Greed</option>
+                    <option value="song5" data-url="https://raw.githubusercontent.com/Asiandra/comfort-characters/main/Music/hideaway.mp3" data-artist="Marino" data-title="hideaway">hideaway</option>
+                    <option value="song6" data-url="https://raw.githubusercontent.com/Asiandra/comfort-characters/main/Music/Lust.mp3" data-artist="Marino" data-title="Lust">Lust</option>
+                    <option value="song7" data-url="https://raw.githubusercontent.com/Asiandra/comfort-characters/main/Music/c00lkidd_1%20(feat.%20ilyhiryu).mp3" data-artist="77yolan" data-title="c00lkidd_1 (feat. ilyhiryu)">c00lkidd_1 (feat. ilyhiryu)</option>
+                    <option value="song8" data-url="https://raw.githubusercontent.com/Asiandra/comfort-characters/main/Music/Monika's%20Lullaby.mp3" data-artist="Monika After Story" data-title="Monika's Lullaby">Monika's Lullaby</option>
+                </select>
+                </div>
+
+                <div class="flex items-center gap-2 px-1">
+                    <span class="text-[9px]">VOL</span>
+                    <input type="range" class="retro-slider flex-1" min="0" max="1" step="0.1" value="0.5" oninput="setVolume(this.value)">
+                </div>
+            </div>
+            <audio id="main-audio" preload="auto" crossorigin="anonymous"></audio>
+        </div>
+
+        <!-- MY COMPUTER -->
+        <div id="win-mycomputer" class="window window-border hidden opening animating" style="top: 50px; left: 50px; width: 400px; height: 300px;" onmousedown="focusWin('win-mycomputer')">
+            <div class="title-bar" onmousedown="dragWindow(event, 'win-mycomputer')" ontouchstart="dragWindow(event, 'win-mycomputer')">
+                <div class="flex items-center gap-1"><img src="https://i.postimg.cc/Y9VdbLqP/computer_explorer_5.png" class="w-4 h-4 win-icon-img"> <span class="win-title-text">My Computer</span></div>
+                <div class="flex gap-1">
+                    <button class="btn-border w-4 h-4 text-[10px] pb-1 font-bold" onclick="minimizeWin('win-mycomputer')">_</button>
+                    <button class="btn-border w-4 h-4 text-[10px] font-bold" onclick="toggleMaximize('win-mycomputer')">□</button>
+                    <button class="btn-border w-4 h-4 text-[10px] font-bold" onclick="closeWin('win-mycomputer')">×</button>
+                </div>
+            </div>
+            <div class="flex-1 bg-white m-1 retro-border-inset p-4 overflow-auto flex flex-wrap gap-4">
+                <div class="flex flex-col items-center w-16 text-center cursor-pointer" onclick="window.open('https://github.com/Asiandra/comfort-characters')">
+                    <img src="https://i.postimg.cc/Z567LxgF/keys-5.png" class="w-8 h-8 mb-1">
+                    <span>The Code</span>
+                </div>
+                <div class="flex flex-col items-center w-16 text-center cursor-pointer" onclick="window.open('https://asiandra.github.io/Vibrant-Twilight/')">
+                    <img src="https://i.postimg.cc/vZwTn94f/Favicon.png" class="w-8 h-8 mb-1">
+                    <span>Vibrant Twilight</span>
+                </div>
+                <div class="flex flex-col items-center w-16 text-center cursor-pointer" onclick="window.open('https://kamisato-ajax.carrd.co/')">
+                    <img src="https://i.postimg.cc/P5qtkxDF/Touya_Icon.png" class="w-8 h-8 mb-1">
+                    <span>My Carrd</span>
+                </div>
+            </div>
+            <div class="resizer" onmousedown="resizeWindow(event, 'win-mycomputer')" ontouchstart="resizeWindow(event, 'win-mycomputer')"></div>
+        </div>
+
+        <!-- README -->
+        <div id="win-about" class="window window-border hidden opening animating" style="top: 80px; left: 80px; width: 350px; height: 280px;" onmousedown="focusWin('win-about')">
+            <div class="title-bar" onmousedown="dragWindow(event, 'win-about')" ontouchstart="dragWindow(event, 'win-about')">
+                <div class="flex items-center gap-1"><span class="win-icon"><img src="https://i.postimg.cc/WbcnzvDq/notepad_5.png" class="w-4 h-4 win-icon-img"></span> <span class="win-title-text">Readme.txt</span></div>
+                <div class="flex gap-1">
+                    <button class="btn-border w-4 h-4 text-[10px] pb-1 font-bold" onclick="minimizeWin('win-about')">_</button>
+                    <button class="btn-border w-4 h-4 text-[10px] font-bold" onclick="toggleMaximize('win-about')">□</button>
+                    <button class="btn-border w-4 h-4 text-[10px] font-bold" onclick="closeWin('win-about')">×</button>
+                </div>
+            </div>
+            <div class="flex-1 bg-white m-1 retro-border-inset p-2 font-mono overflow-auto text-[10px]">
+                KAVEH'S COMFORT CHARACTERS<br>
+                ---------------------------<br>
+                This is NOWHERE close to being finished<br>
+                I give up for now it's almost 2 AM<br>
+                I have NO IDEA how this looks on mobile I'm sorry if this is absolutely horrendous<br>
+                Lmk if anything's broken ts was a pain in the ass I'll finish this later<br>
+                Also everything is draggable and the buttons work yippee<br>
+                Please use the music player it's cool and took two hours to figure out yes everything works and I'll add more tracks later enjoy the surface of my bad music taste for now
+            </div>
+            <div class="resizer" onmousedown="resizeWindow(event, 'win-about')" ontouchstart="resizeWindow(event, 'win-about')"></div>
+        </div>
+    </div>
+
+    <!-- WINDOWS STUFF -->
+    <template id="folder-tpl">
+        <div class="window window-border opening animating">
+            <div class="title-bar">
+                <div class="flex items-center gap-1"><span class="win-icon"><img src="https://i.postimg.cc/Jhp6HdfF/directory_open_file_mydocs_4.png" class="w-4 h-4 win-icon-img"></span> <span class="win-title-text win-title">Folder</span></div>
+                <div class="flex gap-1">
+                    <button class="win-min btn-border w-4 h-4 text-[10px] pb-1 font-bold">_</button>
+                    <button class="win-max btn-border w-4 h-4 text-[10px] font-bold">□</button>
+                    <button class="win-close btn-border w-4 h-4 text-[10px] font-bold">×</button>
+                </div>
+            </div>
+            <div class="flex-1 bg-white m-1 retro-border-inset p-2 grid grid-cols-3 content-start gap-2 overflow-auto win-grid"></div>
+            <div class="resizer"></div>
+        </div>
+    </template>
+
+    <template id="profile-tpl">
+        <div class="window window-border opening animating" style="width: 280px; height: 350px;">
+            <div class="title-bar">
+                <div class="flex items-center gap-1"><span class="win-icon">👤</span> <span class="win-title-text win-title">Bio</span></div>
+                <div class="flex gap-1">
+                    <button class="win-min btn-border w-4 h-4 text-[10px] pb-1 font-bold">_</button>
+                    <button class="win-max btn-border w-4 h-4 text-[10px] font-bold">□</button>
+                    <button class="win-close btn-border w-4 h-4 text-[10px] font-bold">×</button>
+                </div>
+            </div>
+            <div class="flex-1 bg-[#c0c0c0] p-2">
+                <div class="retro-border-inset bg-white h-full p-4 flex flex-col items-center overflow-auto">
+                    <div class="text-6xl mb-4 char-icon"></div>
+                    <h2 class="text-xl font-bold char-name mb-2"></h2>
+                    <p class="text-sm char-desc text-center"></p>
+                </div>
+            </div>
+            <div class="resizer"></div>
+        </div>
+    </template>
+
+    <!-- Taskbar -->
+    <div class="taskbar">
+        <button class="btn-border h-6 px-1 flex items-center gap-1 font-bold" onclick="toggleStartMenu(event)">
+            <img src="https://i.postimg.cc/SN9v1d9L/windows_0.png" class="w-4 h-4"> Start
+        </button>
+        <div class="mx-2 h-6 w-[2px] bg-gray-400 shadow-[1px_0_0_white]"></div>
+        <div id="task-list" class="flex flex-1 gap-1 overflow-hidden h-full items-center"></div>
+        <div class="ml-auto px-2 retro-border-inset h-6 flex items-center bg-gray-200">
+            <span id="clock" class="font-mono text-[10px]">00:00 AM</span>
+        </div>
+    </div>
+
+    <div id="start-menu" class="window window-border hidden fixed bottom-[30px] left-0.5 w-48 flex-row z-[100000]">
+        <div class="bg-gray-500 w-8 flex items-end justify-center pb-2" style="background: linear-gradient(0deg, #000080, #1084d0);">
+            <span class="text-white font-bold text-[14px] whitespace-nowrap" style="writing-mode: vertical-rl; transform: rotate(180deg);">Windows 98</span>
+        </div>
+        <div class="flex-1 bg-gray-200 py-1">
+            <div class="px-4 py-2 hover:bg-blue-800 hover:text-white cursor-pointer" onclick="openWindow('win-mycomputer')"><img src="https://i.postimg.cc/Y9VdbLqP/computer_explorer_5.png" class="w-4 h-4"> My Computer</div>
+            <div class="px-4 py-2 hover:bg-blue-800 hover:text-white cursor-pointer" onclick="openWindow('win-music')"><img src="https://i.postimg.cc/7PGsb9KY/cd_audio_cd_a_4.png" class="w-4 h-4"> CD Player</div>
+            <div class="h-[1px] bg-gray-400 my-1 mx-2 shadow-[0_1px_0_white]"></div>
+            <div class="px-4 py-2 hover:bg-blue-800 hover:text-white cursor-pointer" onclick="location.reload()">Sh<u>u</u>t Down...</div>
+        </div>
+    </div>
+
+    <script>
+        const characters = [
+            { id: 'BSC', name: "Black Sapphire Cookie", media: "Cookie Run: Kingdom", icon: "https://i.postimg.cc/Tw3DpTgy/BSapphire_Icon.png", desc: "I give up" },
+            { id: 'SMC', name: "Shadow Milk Cookie", media: "Cookie Run: Kingdom", icon: "https://i.postimg.cc/LX81nmLg/SMilk_Icon.png", desc: "Silly guy" },
+            { id: 'kaveh', name: "Kaveh", media: "Hoyoverse", icon: "🪶", desc: "Huzzah" },
+            { id: 'hl', name: "Hong Lu", media: "Limbus Company", icon: "https://i.postimg.cc/Tw3DpTgW/Hong_Lu_Icon.png", desc: "Hi." },
+            { id: 'toya', name: "Toya", media: "Project Sekai", icon: "☕", desc: "This is a cry for help" },
+            { id: 'smat', name: "Shadow Milk Aoyagi Touya", media: "MISC", icon: "Help", desc: "thing I made" }
+        ];
+
+        let zIndex = 200; 
+        const registry = {};
+        let musicTimer = null;
+        const audio = document.getElementById('main-audio');
+
+        function toggleStartMenu(e) { e.stopPropagation(); document.getElementById('start-menu')?.classList.toggle('hidden'); }
+        function hideStartMenu() { document.getElementById('start-menu')?.classList.add('hidden'); }
+
+        function deselectAllIcons(e) {
+            const target = e.target;
+            if (target.id === 'desktop' || target.id === 'icon-layer') {
+                document.querySelectorAll('.desktop-icon').forEach(i => i.classList.remove('selected'));
+            }
+        }
+
+        function handleIconInteraction(e, target, isFolder = false) {
+            e.stopPropagation();
+            const icon = e.currentTarget;
+            document.querySelectorAll('.desktop-icon').forEach(i => i.classList.remove('selected'));
+            icon.classList.add('selected');
+
+            const rect = icon.getBoundingClientRect();
+            const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+            const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+            const startX = clientX;
+            const startY = clientY;
+            const initialTop = rect.top;
+            const initialLeft = rect.left;
+            let hasMoved = false;
+
+            const move = (ev) => {
+                const curX = ev.type.includes('touch') ? ev.touches[0].clientX : ev.clientX;
+                const curY = ev.type.includes('touch') ? ev.touches[0].clientY : ev.clientY;
+                const dist = Math.sqrt(Math.pow(curX - startX, 2) + Math.pow(curY - startY, 2));
+                if (dist > 5) {
+                    hasMoved = true;
+                    if (icon.parentElement.id === 'desktop-grid') {
+                        icon.style.position = 'absolute';
+                        icon.style.zIndex = '50';
+                        document.getElementById('icon-layer').appendChild(icon);
+                    }
+                    icon.style.left = (initialLeft + (curX - startX)) + 'px';
+                    icon.style.top = (initialTop + (curY - startY)) + 'px';
+                }
+            };
+
+            const up = () => {
+                document.removeEventListener('mousemove', move);
+                document.removeEventListener('mouseup', up);
+                document.removeEventListener('touchmove', move);
+                document.removeEventListener('touchend', up);
+                if (!hasMoved) {
+                    if (isFolder) openFolder(target);
+                    else openWindow(target);
+                }
+            };
+
+            document.addEventListener('mousemove', move);
+            document.addEventListener('mouseup', up);
+            document.addEventListener('touchmove', move, {passive: false});
+            document.addEventListener('touchend', up);
+        }
+
+        function openWindow(id) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            if (el.classList.contains('hidden')) {
+                el.classList.remove('hidden');
+                requestAnimationFrame(() => {
+                    el.classList.remove('opening');
+                    el.classList.remove('minimized');
+                });
+                registry[id] = el;
+            } else if (el.classList.contains('minimized')) {
+                el.classList.remove('minimized');
+            }
+            focusWin(id);
+            updateTaskbar();
+        }
+
+        function renderIcon(iconData, className = "w-8 h-8") {
+        if (iconData.startsWith('http') || iconData.startsWith('./') || iconData.startsWith('data:')) {
+            return `<img src="${iconData}" class="${className} object-contain">`;
+        }
+        return `<div class="${className} flex items-center justify-center text-2xl">${iconData}</div>`;
+        }
+
+        function openFolder(type) {
+        const id = 'folder-' + type.toLowerCase();
+        if (registry[id]) { 
+            if (registry[id].classList.contains('minimized')) registry[id].classList.remove('minimized');
+            focusWin(id); 
+            return; 
+        }
+        const tpl = document.getElementById('folder-tpl').content.cloneNode(true);
+        const win = tpl.querySelector('.window');
+        win.id = id; win.style.top = '100px'; win.style.left = '100px'; win.style.width = '300px'; win.style.height = '200px';
+        win.querySelector('.win-title').innerText = type;
+        win.querySelector('.win-close').onclick = () => closeWin(id);
+        win.querySelector('.win-min').onclick = () => minimizeWin(id);
+        win.querySelector('.win-max').onclick = () => toggleMaximize(id);
+        win.querySelector('.resizer').onmousedown = (e) => resizeWindow(e, id);
+        win.onmousedown = () => focusWin(id);
+        win.querySelector('.title-bar').onmousedown = (e) => dragWindow(e, id);
+
+        const grid = win.querySelector('.win-grid');
+        characters.filter(c => c.media === type).forEach(c => {
+            const item = document.createElement('div');
+            item.className = 'flex flex-col items-center p-1 cursor-pointer hover:bg-blue-800 hover:text-white rounded';
+            item.innerHTML = `${renderIcon(c.icon)}<span class="text-[10px] text-center mt-1">${c.name}</span>`;
+            item.onclick = (e) => { e.stopPropagation(); openProfile(c); };
+            grid.appendChild(item);
+        });
+        document.getElementById('desktop').appendChild(win);
+        registry[id] = win;
+        requestAnimationFrame(() => win.classList.remove('opening'));
+        focusWin(id);
+    }
+
+        function openProfile(char) {
+        const id = 'profile-' + char.id;
+        if (registry[id]) { 
+            if (registry[id].classList.contains('minimized')) registry[id].classList.remove('minimized');
+            focusWin(id); 
+            return; 
+        }
+        const tpl = document.getElementById('profile-tpl').content.cloneNode(true);
+        const win = tpl.querySelector('.window');
+        win.id = id; win.style.top = '120px'; win.style.left = '150px';
+        win.querySelector('.win-title').innerText = char.name + " - Bio";
+        
+        win.querySelector('.char-icon').innerHTML = renderIcon(char.icon, "w-16 h-16 text-5xl");
+        win.querySelector('.char-name').innerText = char.name;
+        win.querySelector('.char-desc').innerText = char.desc;
+        
+        win.querySelector('.win-close').onclick = () => closeWin(id);
+        win.querySelector('.win-min').onclick = () => minimizeWin(id);
+        win.querySelector('.win-max').onclick = () => toggleMaximize(id);
+        win.querySelector('.resizer').onmousedown = (e) => resizeWindow(e, id);
+        win.onmousedown = () => focusWin(id);
+        win.querySelector('.title-bar').onmousedown = (e) => dragWindow(e, id);
+
+        document.getElementById('desktop').appendChild(win);
+        registry[id] = win;
+        requestAnimationFrame(() => win.classList.remove('opening'));
+        focusWin(id);
+    }
+
+        function focusWin(id) {
+            Object.values(registry).forEach(w => w.classList.remove('active-win'));
+            const win = registry[id];
+            if (!win) return;
+            zIndex++; win.style.zIndex = zIndex;
+            win.classList.add('active-win');
+            updateTaskbar();
+        }
+
+        function minimizeWin(id) { registry[id].classList.add('minimized'); updateTaskbar(); }
+
+        function closeWin(id) {
+            const el = registry[id];
+            el.classList.add('opening');
+            setTimeout(() => {
+                if (id.startsWith('folder-') || id.startsWith('profile-')) el.remove();
+                else el.classList.add('hidden');
+                delete registry[id];
+                updateTaskbar();
+            }, 200);
+        }
+
+        function toggleMaximize(id) {
+            if (id === 'win-music') return;
+            const win = registry[id];
+            if (win) win.classList.toggle('maximized');
+        }
+
+        function dragWindow(e, id) {
+            const win = registry[id];
+            if (win.classList.contains('maximized')) return;
+            focusWin(id);
+            win.classList.remove('animating'); 
+            const startX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+            const startY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+            const ox = startX - win.offsetLeft;
+            const oy = startY - win.offsetTop;
+            const move = (ev) => {
+                const curX = ev.type.includes('touch') ? ev.touches[0].clientX : ev.clientX;
+                const curY = ev.type.includes('touch') ? ev.touches[0].clientY : ev.clientY;
+                win.style.left = (curX - ox) + 'px';
+                win.style.top = (curY - oy) + 'px';
+            };
+            const up = () => {
+                win.classList.add('animating');
+                document.removeEventListener('mousemove', move);
+                document.removeEventListener('mouseup', up);
+                document.removeEventListener('touchmove', move);
+                document.removeEventListener('touchend', up);
+            };
+            document.addEventListener('mousemove', move);
+            document.addEventListener('mouseup', up);
+            document.addEventListener('touchmove', move, {passive: false});
+            document.addEventListener('touchend', up);
+        }
+
+        function resizeWindow(e, id) {
+            if (id === 'win-music') return;
+            e.stopPropagation();
+            const win = registry[id];
+            win.classList.remove('animating');
+            const startW = win.offsetWidth, startH = win.offsetHeight;
+            const startX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+            const startY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+            const move = (ev) => {
+                const curX = ev.type.includes('touch') ? ev.touches[0].clientX : ev.clientX;
+                const curY = ev.type.includes('touch') ? ev.touches[0].clientY : ev.clientY;
+                win.style.width = Math.max(200, startW + (curX - startX)) + 'px';
+                win.style.height = Math.max(150, startH + (curY - startY)) + 'px';
+            };
+            const up = () => {
+                win.classList.add('animating');
+                document.removeEventListener('mousemove', move);
+                document.removeEventListener('mouseup', up);
+                document.removeEventListener('touchmove', move);
+                document.removeEventListener('touchend', up);
+            };
+            document.addEventListener('mousemove', move);
+            document.addEventListener('mouseup', up);
+            document.addEventListener('touchmove', move, {passive: false});
+            document.addEventListener('touchend', up);
+        }
+
+        function updateTaskbar() {
+            const list = document.getElementById('task-list');
+            list.innerHTML = '';
+            Object.entries(registry).forEach(([id, win]) => {
+                if (win.classList.contains('hidden')) return;
+                const isActive = win.classList.contains('active-win');
+                const titleText = win.querySelector('.win-title-text').innerText;
+                let iconHtml = '';
+                const iconImg = win.querySelector('.win-icon-img');
+                const charIconContainer = win.querySelector('.char-icon');
+                
+                if (charIconContainer) {
+                    const charData = characters.find(c => id === 'profile-' + c.id);
+                    if (charData) {
+                        iconHtml = renderIcon(charData.icon, "w-3 h-3");
+                    } else {
+                        iconHtml = `<span>👤</span>`;
+                    }
+                } else if (iconImg) {
+                    iconHtml = `<img src="${iconImg.src}" class="w-3 h-3">`;
+                } else {
+                    iconHtml = `<span>📁</span>`;
+                }
+                
+                const btn = document.createElement('button');
+                btn.className = `task-btn ${isActive ? 'active-task' : ''}`;
+                btn.innerHTML = `<div class="flex items-center justify-center w-4">${iconHtml}</div><span class="truncate ml-1">${titleText}</span>`;
+                btn.onclick = (e) => {
+                    e.stopPropagation();
+                    if (win.classList.contains('minimized')) { win.classList.remove('minimized'); focusWin(id); }
+                    else if (isActive) minimizeWin(id); 
+                    else focusWin(id);
+                };
+                list.appendChild(btn);
+            });
+        }
+
+        function setVolume(v) { audio.volume = v; }
+        function formatTime(seconds) {
+            if (isNaN(seconds) || !isFinite(seconds)) return "00:00";
+            const m = Math.floor(seconds / 60).toString().padStart(2, '0');
+            const s = Math.floor(seconds % 60).toString().padStart(2, '0');
+            return `${m}:${s}`;
+        }
+
+        function changeTrack() {
+            const select = document.getElementById('cd-track-select');
+            const selected = select.options[select.selectedIndex];
+            if (!selected || selected.value === 'none') return;
+            document.getElementById('cd-artist').innerText = selected.getAttribute('data-artist');
+            document.getElementById('cd-title').innerText = selected.getAttribute('data-title');
+            audio.src = selected.getAttribute('data-url');
+            playAudio();
+            updateTrackStatus();
+        }
+
+        function updateTrackStatus() {
+            const select = document.getElementById('cd-track-select');
+            const trackCountEl = document.getElementById('cd-track-count');
+            if (trackCountEl) {
+                trackCountEl.innerText = `Track ${select.selectedIndex}/${select.options.length - 1}`;
+            }
+        }
+
+        function playAudio() {
+            if (!audio.src || audio.src === window.location.href || audio.src === "") {
+                const select = document.getElementById('cd-track-select');
+                if (select.selectedIndex <= 0 && select.options.length > 1) {
+                    select.selectedIndex = 1;
+                }
+                const selected = select.options[select.selectedIndex];
+                if (selected && selected.value !== 'none') {
+                    audio.src = selected.getAttribute('data-url');
+                    document.getElementById('cd-artist').innerText = selected.getAttribute('data-artist');
+                    document.getElementById('cd-title').innerText = selected.getAttribute('data-title');
+                } else {
+                    return;
+                }
+            }
+            
+            audio.play().then(() => {
+                document.getElementById('cd-play-indicator').style.opacity = '1';
+                document.getElementById('cd-error').classList.add('hidden');
+                startCDTimer();
+                updateTrackStatus();
+            }).catch((err) => {
+                console.error("Playback failed:", err);
+                document.getElementById('cd-error').classList.remove('hidden');
+            });
+        }
+
+        function pauseAudio() { audio.pause(); document.getElementById('cd-play-indicator').style.opacity = '0'; }
+        function stopAudio() { audio.pause(); audio.currentTime = 0; pauseAudio(); updateTimeDisplay(); }
+
+        function nextTrack() {
+            const select = document.getElementById('cd-track-select');
+            select.selectedIndex = (select.selectedIndex % (select.options.length - 1)) + 1;
+            changeTrack();
+        }
+
+        function prevTrack() {
+            const select = document.getElementById('cd-track-select');
+            select.selectedIndex = select.selectedIndex <= 1 ? select.options.length - 1 : select.selectedIndex - 1;
+            changeTrack();
+        }
+
+        function startCDTimer() { if (!musicTimer) musicTimer = setInterval(updateTimeDisplay, 500); }
+        function stopCDTimer() { clearInterval(musicTimer); musicTimer = null; }
+
+        function updateTimeDisplay() {
+            const select = document.getElementById('cd-track-select');
+            const trackStr = select.selectedIndex.toString().padStart(2, '0');
+            document.getElementById('cd-time').innerText = `[${trackStr}] ${formatTime(audio.currentTime)} / ${formatTime(audio.duration)}`;
+        }
+
+        audio.onended = () => nextTrack();
+        
+        setInterval(() => { 
+            const d = new Date(); 
+            document.getElementById('clock').innerText = d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}); 
+        }, 1000);
+
+        window.onload = () => {
+            const select = document.getElementById('cd-track-select');
+            if (select && select.options.length > 1) {
+                const first = select.options[1];
+                document.getElementById('cd-artist').innerText = first.getAttribute('data-artist');
+                document.getElementById('cd-title').innerText = first.getAttribute('data-title');
+            }
+            
+            updateTrackStatus();
+            openWindow('win-music');
+            openWindow('win-about');
+        };
+    </script>
+</body>
+</html>
