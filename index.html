@@ -79,6 +79,7 @@
             color: #d0d0d0;
             padding: 2px 3px;
             display: flex;
+            flex-direction: row;
             justify-content: space-between;
             align-items: center;
             font-weight: bold;
@@ -92,6 +93,13 @@
         .window.active-win .title-bar {
             background: linear-gradient(90deg, var(--win-blue), var(--win-blue-light));
             color: white;
+        }
+
+        .win-title-text {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-right: 8px;
         }
 
         /* ANIMATION */
@@ -228,6 +236,13 @@
             font-weight: bold;
         }
 
+        /* LOADING */
+        .loader {
+            border: 3px solid #f3f3f3; border-top: 3px solid var(--win-blue);
+            border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
         /* CUSTOM SCROLLBAR */
         ::-webkit-scrollbar { width: 16px; height: 16px; }
         ::-webkit-scrollbar-track { background: #dfdfdf; box-shadow: inset 1px 1px 0 #808080, inset -1px -1px 0 #fff; }
@@ -318,8 +333,11 @@
         <!-- CD PLAYER -->
         <div id="win-music" class="window window-border hidden opening animating" style="top: 100px; left: 200px; width: 360px;" onmousedown="focusWin('win-music')">
             <div class="title-bar" onmousedown="dragWindow(event, 'win-music')" ontouchstart="dragWindow(event, 'win-music')">
-                <div class="flex items-center gap-1"><span class="win-icon"><img src="https://i.postimg.cc/7PGsb9KY/cd_audio_cd_a_4.png" class="w-4 h-4 win-icon-img"></span> <span class="win-title-text">CD Player</span></div>
-                <div class="flex gap-1">
+                <div class="flex items-center gap-1 min-w-0 flex-1">
+                    <img src="https://i.postimg.cc/7PGsb9KY/cd_audio_cd_a_4.png" class="w-4 h-4 flex-shrink-0"> 
+                    <span class="win-title-text">CD Player</span>
+                </div>
+                <div class="flex gap-[2px] flex-shrink-0">
                     <button class="btn-border w-4 h-4 text-[10px] pb-1 font-bold" onclick="minimizeWin('win-music')">_</button>
                     <button class="btn-border w-4 h-4 text-[10px] font-bold" onclick="closeWin('win-music')">×</button>
                 </div>
@@ -371,8 +389,11 @@
         <!-- MY COMPUTER -->
         <div id="win-mycomputer" class="window window-border hidden opening animating" style="top: 50px; left: 50px; width: 400px; height: 300px;" onmousedown="focusWin('win-mycomputer')">
             <div class="title-bar" onmousedown="dragWindow(event, 'win-mycomputer')" ontouchstart="dragWindow(event, 'win-mycomputer')">
-                <div class="flex items-center gap-1"><img src="https://i.postimg.cc/Y9VdbLqP/computer_explorer_5.png" class="w-4 h-4 win-icon-img"> <span class="win-title-text">My Computer</span></div>
-                <div class="flex gap-1">
+                <div class="flex items-center gap-1 min-w-0 flex-1">
+                    <img src="https://i.postimg.cc/Y9VdbLqP/computer_explorer_5.png" class="w-4 h-4 flex-shrink-0"> 
+                    <span class="win-title-text">My Computer</span>
+                </div>
+                <div class="flex gap-[2px] flex-shrink-0">
                     <button class="btn-border w-4 h-4 text-[10px] pb-1 font-bold" onclick="minimizeWin('win-mycomputer')">_</button>
                     <button class="btn-border w-4 h-4 text-[10px] font-bold" onclick="toggleMaximize('win-mycomputer')">□</button>
                     <button class="btn-border w-4 h-4 text-[10px] font-bold" onclick="closeWin('win-mycomputer')">×</button>
@@ -398,8 +419,11 @@
         <!-- README -->
         <div id="win-about" class="window window-border hidden opening animating" style="top: 80px; left: 80px; width: 350px; height: 280px;" onmousedown="focusWin('win-about')">
             <div class="title-bar" onmousedown="dragWindow(event, 'win-about')" ontouchstart="dragWindow(event, 'win-about')">
-                <div class="flex items-center gap-1"><span class="win-icon"><img src="https://i.postimg.cc/WbcnzvDq/notepad_5.png" class="w-4 h-4 win-icon-img"></span> <span class="win-title-text">Readme.txt</span></div>
-                <div class="flex gap-1">
+                <div class="flex items-center gap-1 min-w-0 flex-1">
+                    <img src="https://i.postimg.cc/WbcnzvDq/notepad_5.png" class="w-4 h-4 flex-shrink-0"> 
+                    <span class="win-title-text">Readme.txt</span>
+                </div>
+                <div class="flex gap-[2px] flex-shrink-0">
                     <button class="btn-border w-4 h-4 text-[10px] pb-1 font-bold" onclick="minimizeWin('win-about')">_</button>
                     <button class="btn-border w-4 h-4 text-[10px] font-bold" onclick="toggleMaximize('win-about')">□</button>
                     <button class="btn-border w-4 h-4 text-[10px] font-bold" onclick="closeWin('win-about')">×</button>
@@ -418,11 +442,11 @@
     <!-- DISPLAY PROPERTIES  -->
     <div id="win-display" class="window window-border hidden opening animating" style="top: 150px; left: 40px; width: 320px;" onmousedown="focusWin('win-display')">
         <div class="title-bar" onmousedown="dragWindow(event, 'win-display')" ontouchstart="dragWindow(event, 'win-display')">
-                <div class="flex items-center gap-1">
-                    <img src="https://i.postimg.cc/BQb299x6/display_properties_5.png" class="w-4 h-4 win-icon-img">
+                <div class="flex items-center gap-1 min-w-0 flex-1">
+                    <img src="https://i.postimg.cc/BQb299x6/display_properties_5.png" class="w-4 h-4 flex-shrink-0">
                     <span class="win-title-text">Display Properties</span>
                 </div>
-            <div class="flex gap-1">
+            <div class="flex gap-[2px] flex-shrink-0">
                 <button class="btn-border w-4 h-4 text-[10px] pb-1 font-bold" onclick="minimizeWin('win-display')">_</button>
                 <button class="btn-border w-4 h-4 text-[10px] font-bold" onclick="closeWin('win-display')">×</button>
             </div>
@@ -437,7 +461,6 @@
             </div>
             <div class="space-y-1">
                 <label class="text-[11px]">Background <u>W</u>allpaper:</label>
-                <!-- IMAGES -->
                     <div class="flex gap-2">
                     <select id="wallpaper-select" class="retro-select flex-1 h-6 min-w-0" onchange="previewWallpaper(this.value)">
                         <option value="none">Windows Default (Teal)</option>
@@ -466,8 +489,11 @@
     <template id="folder-tpl">
         <div class="window window-border opening animating">
             <div class="title-bar">
-                <div class="flex items-center gap-1"><span class="win-icon"><img src="https://i.postimg.cc/Jhp6HdfF/directory_open_file_mydocs_4.png" class="w-4 h-4 win-icon-img"></span> <span class="win-title-text win-title">Folder</span></div>
-                <div class="flex gap-1">
+                <div class="flex items-center gap-1 min-w-0 flex-1">
+                    <img src="https://i.postimg.cc/Jhp6HdfF/directory_open_file_mydocs_4.png" class="w-4 h-4 flex-shrink-0"> 
+                    <span class="win-title-text win-title">Folder</span>
+                </div>
+                <div class="flex gap-[2px] flex-shrink-0">
                     <button class="win-min btn-border w-4 h-4 text-[10px] pb-1 font-bold">_</button>
                     <button class="win-max btn-border w-4 h-4 text-[10px] font-bold">□</button>
                     <button class="win-close btn-border w-4 h-4 text-[10px] font-bold">×</button>
@@ -479,20 +505,24 @@
     </template>
 
     <template id="profile-tpl">
-        <div class="window window-border opening animating" style="width: 280px; height: 350px;">
+        <div class="window window-border opening animating" style="width: 400px; height: 500px;">
             <div class="title-bar">
-                <div class="flex items-center gap-1"><span class="win-icon"></span> <span class="win-title-text win-title">Bio</span></div>
-                <div class="flex gap-1">
+                <div class="flex items-center gap-1 min-w-0 flex-1">
+                    <span class="win-icon flex-shrink-0"></span>
+                    <span class="win-title-text win-title">Loading...</span>
+                </div>
+                <div class="flex gap-[2px] flex-shrink-0">
                     <button class="win-min btn-border w-4 h-4 text-[10px] pb-1 font-bold">_</button>
                     <button class="win-max btn-border w-4 h-4 text-[10px] font-bold">□</button>
                     <button class="win-close btn-border w-4 h-4 text-[10px] font-bold">×</button>
                 </div>
             </div>
             <div class="flex-1 bg-[#c0c0c0] p-1 flex flex-col overflow-hidden">
-                <div class="retro-border-inset bg-white flex-1 p-4 flex flex-col items-center overflow-y-auto overflow-x-hidden">
-                    <div class="mb-4 char-icon flex-shrink-0 min-h-[64px]"></div>
-                    <h2 class="text-xl font-bold char-name mb-2 flex-shrink-0 text-center"></h2>
-                    <p class="text-sm char-desc text-center w-full break-words"></p>
+                <div class="retro-border-inset bg-white flex-1 overflow-y-auto content-area">
+                    <div class="flex flex-col items-center justify-center h-full gap-2 loading-state">
+                        <div class="loader"></div>
+                        <p>Fetching Character Data...</p>
+                    </div>
                 </div>
             </div>
             <div class="resizer"></div>
@@ -516,37 +546,40 @@
             <span class="text-white font-bold text-[14px] whitespace-nowrap" style="writing-mode: vertical-rl; transform: rotate(180deg);">Windows 98</span>
         </div>
         <div class="flex-1 bg-gray-200 py-1">
-            <div class="px-4 py-2 hover:bg-blue-800 hover:text-white cursor-pointer" onclick="openWindow('win-mycomputer')"><img src="https://i.postimg.cc/Y9VdbLqP/computer_explorer_5.png" class="w-4 h-4"> My Computer</div>
-            <div class="px-4 py-2 hover:bg-blue-800 hover:text-white cursor-pointer" onclick="openWindow('win-music')"><img src="https://i.postimg.cc/7PGsb9KY/cd_audio_cd_a_4.png" class="w-4 h-4"> CD Player</div>
-            <div class="px-4 py-2 hover:bg-blue-800 hover:text-white cursor-pointer" onclick="openWindow('win-display')"><img src="https://i.postimg.cc/BQb299x6/display_properties_5.png" class="w-4 h-4"> Display Properties</div>
+            <div class="px-4 py-2 hover:bg-blue-800 hover:text-white cursor-pointer" onclick="openWindow('win-mycomputer')"><img src="https://i.postimg.cc/Y9VdbLqP/computer_explorer_5.png" class="w-4 h-4 inline-block mr-2"> My Computer</div>
+            <div class="px-4 py-2 hover:bg-blue-800 hover:text-white cursor-pointer" onclick="openWindow('win-music')"><img src="https://i.postimg.cc/7PGsb9KY/cd_audio_cd_a_4.png" class="w-4 h-4 inline-block mr-2"> CD Player</div>
+            <div class="px-4 py-2 hover:bg-blue-800 hover:text-white cursor-pointer" onclick="openWindow('win-display')"><img src="https://i.postimg.cc/BQb299x6/display_properties_5.png" class="w-4 h-4 inline-block mr-2"> Display Properties</div>
             <div class="h-[1px] bg-gray-400 my-1 mx-2 shadow-[0_1px_0_white]"></div>
             <div class="px-4 py-2 hover:bg-blue-800 hover:text-white cursor-pointer" onclick="location.reload()">Sh<u>u</u>t Down...</div>
         </div>
     </div>
 
     <script>
+
+        const GITHUB_BASE_URL = "https://raw.githubusercontent.com/Asiandra/comfort-characters/main/Characters/";
+        
         const characters = [
-            { id: 'bsc', name: "Black Sapphire Cookie", media: "Cookie Run: Kingdom", icon: "https://i.postimg.cc/Tw3DpTgy/BSapphire_Icon.png", desc: "What could be more delectable than fresh, juicy gossip?! Well, rumor has it there is a Cookie who has made the art of spreading rumors his profession! From harmless nonsense to large-scale propaganda—this charming fellow has mastered it all. Armed with his treasured eye-shaped microphone—a gift from the Shadow Milk Cookie, no less—Black Sapphire Cookie works tirelessly to spread his master's teachings around the world on the wings of rumor. Try not to fall for his artisanal falsehoods. Who knows: Black Sapphire Cookie might be on the other side of the screen right now!" },
-            { id: 'smc', name: "Shadow Milk Cookie", media: "Cookie Run: Kingdom", icon: "https://i.postimg.cc/LX81nmLg/SMilk_Icon.png", desc: "What could have happened to this Cookie, once heralded as the Fount of Knowledge, that made him become the Master of Deceit. Eons ago, when Earthbread was still young, the radiance of Knowledge was born to bless all that was with meaning. Yet, in the shadow cast by this light, dwelled its twin, Deceit. With time, all those disenchanted with the bitter Truth turned their eyes to the alluring tapestry of lies spun by the silver-tongued trickster. Masterfully juggling truths and falsehoods on the scene of a whimsical shadowplay, Shadow Milk Cookie has perfected his craft of shattering beliefs of the most stoic in a myriad of treacherous reflections. Applause, applause! It is time to raise the curtain, for the show to plunge the world into never-ending chaos is about to begin..." },
-            { id: 'tr', name: "Truthless Recluse", media: "Cookie Run: Kingdom", icon: "https://i.postimg.cc/k5Dn7CnL/Truthless_Recluse_Icon.png", desc: "Oops." },
-            { id: 'chasca', name: "Chasca", media: "Hoyoverse", icon: "https://i.postimg.cc/ZYP07T0H/Chasca.png", desc: "Chasca" },
-            { id: 'kaveh', name: "Kaveh", media: "Hoyoverse", icon: "https://i.postimg.cc/0jjj3SzJ/Kaveh_Icon.png", desc: "Architect" },
-            { id: 'kuki', name: "Kuki Shinobu", media: "Hoyoverse", icon: "https://i.postimg.cc/FFb1W91x/Kuki_Shinobu.png", desc: "Arataki Gang" },
-            { id: 'dan', name: "Dan Heng", media: "Hoyoverse", icon: "https://i.postimg.cc/7P1bsxbc/Dan_Heng_Icon.gif", desc: "I liked him before I found out he has the same JP VA as Toya" },
-            { id: 'hl', name: "Hong Lu", media: "Limbus Company", icon: "https://i.postimg.cc/Tw3DpTgW/Hong_Lu_Icon.png", desc: "Limbless Company." },
-            { id: 'ys', name: "Yi Sang", media: "Limbus Company", icon: "https://i.postimg.cc/RFP2PJ5v/Yi_Sang_Icon.png", desc: "Limbless Company." },
-            { id: 'levi', name: "Leviathan", media: "Obey Me", icon: "https://i.postimg.cc/QNpCVX35/Leviathan.png", desc: "3, Envy" },
-            { id: 'satan', name: "Satan", media: "Obey Me", icon: "https://i.postimg.cc/NG1FLgcm/Satan.png", desc: "4, Wrath" },
-            { id: 'belphie', name: "Belphegor", media: "Obey Me", icon: "https://i.postimg.cc/h49vhSBm/Belphegor.png", desc: "7, Sloth" },
-            { id: 'toya', name: "Aoyagi Toya", media: "Project Sekai", icon: "https://i.postimg.cc/kGSHc17y/Toya_Stamp.png", desc: "Bivid VAD SQUAD" },
-            { id: 'shiho', name: "Hinomori Shiho", media: "Project Sekai", icon: "https://i.postimg.cc/ZnNQc7Jj/Shiho_Stamp.png", desc: "Neo/leed" },
-            { id: 'rui', name: "Kamishiro Rui", media: "Project Sekai", icon: "https://i.postimg.cc/L5PWTCmD/Rui_Stamp.png", desc: "Shonderlands x Wowtime"},
-            { id: 'akt', name: "Shinonome Akito", media: "Project Sekai", icon: "https://i.postimg.cc/MHBLDPz9/Akito_Stamp.png", desc: "Bivid VAD SQUAD" },
-            { id: 'ena', name: "Shinonome Ena", media: "Project Sekai", icon: "https://i.postimg.cc/VvthRGzB/Ena_Stamp.png", desc: "Discord at 1 AM" },
-            { id: 'tks', name: "Tenma Tsukasa", media: "Project Sekai", icon: "https://i.postimg.cc/prjSZGPq/Tsukasa_Stamp.png", desc: "Shonderlands x Wowtime"},
-            { id: 'art', name: "Touno Arata", media: "Project Sekai", icon: "https://i.postimg.cc/VN3c1bZb/Arata_Tumblr.png", desc: "Bivid VAD SQUAD" },
-            { id: 'smat', name: "Shadow Milk Aoyagi Touya", media: "MISC", icon: "https://i.postimg.cc/0Nr89v8T/SMilk_Touya_Icon.png", desc: "thing I made." },
-            { id: 'trkr', name: "Truthless Recluse Kamishiro Rui", media: "MISC", icon: "https://i.postimg.cc/SKjym4yw/TR_Rui_Icon.png", desc: "thing I made." }
+            { id: 'bsc', name: "Black Sapphire Cookie", media: "Cookie Run: Kingdom", icon: "https://i.postimg.cc/Tw3DpTgy/BSapphire_Icon.png", fileName: "black_sapphire.html" },
+            { id: 'smc', name: "Shadow Milk Cookie", media: "Cookie Run: Kingdom", icon: "https://i.postimg.cc/LX81nmLg/SMilk_Icon.png", fileName: "shadow_milk.html" },
+            { id: 'tr', name: "Truthless Recluse", media: "Cookie Run: Kingdom", icon: "https://i.postimg.cc/k5Dn7CnL/Truthless_Recluse_Icon.png", fileName: "truthless_recluse.html" },
+            { id: 'chasca', name: "Chasca", media: "Hoyoverse", icon: "https://i.postimg.cc/ZYP07T0H/Chasca.png", fileName: "chasca.html" },
+            { id: 'kaveh', name: "Kaveh", media: "Hoyoverse", icon: "https://i.postimg.cc/0jjj3SzJ/Kaveh_Icon.png", fileName: "kaveh.html" },
+            { id: 'kuki', name: "Kuki Shinobu", media: "Hoyoverse", icon: "https://i.postimg.cc/FFb1W91x/Kuki_Shinobu.png", fileName: "kuki_shinobu.html" },
+            { id: 'dan', name: "Dan Heng", media: "Hoyoverse", icon: "https://i.postimg.cc/7P1bsxbc/Dan_Heng_Icon.gif", fileName: "dan_heng.html" },
+            { id: 'hl', name: "Hong Lu", media: "Limbus Company", icon: "https://i.postimg.cc/Tw3DpTgW/Hong_Lu_Icon.png", fileName: "hong_lu.html" },
+            { id: 'ys', name: "Yi Sang", media: "Limbus Company", icon: "https://i.postimg.cc/RFP2PJ5v/Yi_Sang_Icon.png", fileName: "yi_sang.html" },
+            { id: 'levi', name: "Leviathan", media: "Obey Me", icon: "https://i.postimg.cc/QNpCVX35/Leviathan.png", fileName: "leviathan.html" },
+            { id: 'satan', name: "Satan", media: "Obey Me", icon: "https://i.postimg.cc/NG1FLgcm/Satan.png", fileName: "satan.html" },
+            { id: 'belphie', name: "Belphegor", media: "Obey Me", icon: "https://i.postimg.cc/h49vhSBm/Belphegor.png", fileName: "belphegor.html" },
+            { id: 'toya', name: "Aoyagi Toya", media: "Project Sekai", icon: "https://i.postimg.cc/kGSHc17y/Toya_Stamp.png", fileName: "aoyagi_toya.html" },
+            { id: 'shiho', name: "Hinomori Shiho", media: "Project Sekai", icon: "https://i.postimg.cc/ZnNQc7Jj/Shiho_Stamp.png", fileName: "hinomori_shiho.html" },
+            { id: 'rui', name: "Kamishiro Rui", media: "Project Sekai", icon: "https://i.postimg.cc/L5PWTCmD/Rui_Stamp.png", fileName: "kamishiro_rui.html" },
+            { id: 'akt', name: "Shinonome Akito", media: "Project Sekai", icon: "https://i.postimg.cc/MHBLDPz9/Akito_Stamp.png", fileName: "shinonome_akito.html" },
+            { id: 'ena', name: "Shinonome Ena", media: "Project Sekai", icon: "https://i.postimg.cc/VvthRGzB/Ena_Stamp.png", fileName: "shinonome_ena.html" },
+            { id: 'tks', name: "Tenma Tsukasa", media: "Project Sekai", icon: "https://i.postimg.cc/prjSZGPq/Tsukasa_Stamp.png", fileName: "tenma_tsukasa.html" },
+            { id: 'art', name: "Touno Arata", media: "Project Sekai", icon: "https://i.postimg.cc/VN3c1bZb/Arata_Tumblr.png", fileName: "touno_arata.html" },
+            { id: 'smat', name: "Shadow Milk Aoyagi Touya", media: "MISC", icon: "https://i.postimg.cc/0Nr89v8T/SMilk_Touya_Icon.png", fileName: "smat.html" },
+            { id: 'trkr', name: "Truthless Recluse Kamishiro Rui", media: "MISC", icon: "https://i.postimg.cc/SKjym4yw/TR_Rui_Icon.png", fileName: "trkr.html" }
         ];
 
         let zIndex = 200; 
@@ -669,25 +702,20 @@
             updateTaskbar();
         }
 
-        function openProfile(char) {
+        async function openProfile(char) {
             const id = 'profile-' + char.id;
             if (registry[id]) { 
                 if (registry[id].classList.contains('minimized')) registry[id].classList.remove('minimized');
-                focusWin(id); 
+                openWindow(id); 
                 return; 
             }
+
             const tpl = document.getElementById('profile-tpl').content.cloneNode(true);
             const win = tpl.querySelector('.window');
-            win.id = id; win.style.top = '120px'; win.style.left = '150px';
-            win.querySelector('.win-title').innerText = char.name + " - Bio";
-            
-            const titleIcon = win.querySelector('.win-icon');
-            titleIcon.innerHTML = renderIcon(char.icon, "w-4 h-4 text-xs win-icon-img");
-            
-            win.querySelector('.char-icon').innerHTML = renderIcon(char.icon, "w-16 h-16 text-5xl");
-            win.querySelector('.char-name').innerText = char.name;
-            win.querySelector('.char-desc').innerText = char.desc;
-            
+            win.id = id;
+            win.style.top = '50px'; win.style.left = '150px';
+            win.querySelector('.win-title').innerText = char.name;
+            win.querySelector('.win-icon').innerHTML = `<img src="${char.icon}" class="w-4 h-4">`;
             win.querySelector('.win-close').onclick = () => closeWin(id);
             win.querySelector('.win-min').onclick = () => minimizeWin(id);
             win.querySelector('.win-max').onclick = () => toggleMaximize(id);
@@ -697,9 +725,25 @@
 
             document.getElementById('desktop').appendChild(win);
             registry[id] = win;
-            requestAnimationFrame(() => win.classList.remove('opening'));
+            setTimeout(() => win.classList.remove('opening'), 10);
             focusWin(id);
             updateTaskbar();
+
+            try {
+                const response = await fetch(GITHUB_BASE_URL + char.fileName);
+                if (!response.ok) throw new Error("File not found");
+                const html = await response.text();
+                
+                const container = win.querySelector('.content-area');
+                container.innerHTML = html;
+            } catch (err) {
+                win.querySelector('.content-area').innerHTML = `
+                    <div class="p-4 text-red-600 font-bold">
+                        Error: Could not load profile for ${char.name}.<br>
+                        Check if ${char.fileName} exists in your repository.
+                    </div>
+                `;
+            }
         }
 
         function focusWin(id) {
@@ -807,6 +851,8 @@
                     const iconImg = win.querySelector('.win-icon-img');
                     if (iconImg) {
                         iconHtml = `<img src="${iconImg.src}" class="w-3 h-3">`;
+                    } else if (win.querySelector('.title-bar img')) {
+                        iconHtml = `<img src="${win.querySelector('.title-bar img').src}" class="w-3 h-3">`;
                     } else {
                         iconHtml = `<span>📁</span>`;
                     }
