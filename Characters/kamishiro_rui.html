@@ -15,11 +15,11 @@
             --washi-tape: rgba(216, 180, 254, 0.6);
         }
 
-        /* Prevent scrolling and center the fixed canvas */
+        /* Background is set to transparent here so it doesn't 
+           override the background of your host website.
+        */
         body {
-            background-color: var(--soft-purple);
-            background-image: radial-gradient(#d8b4fe 1px, transparent 1px);
-            background-size: 20px 20px;
+            background: transparent;
             margin: 0;
             display: flex;
             align-items: center;
@@ -28,27 +28,29 @@
             overflow: hidden; 
         }
 
-        /* THE LOCKING MECHANISM:
-           We define a hard-coded width/height.
-           The 'scale-wrapper' will shrink this whole box to fit smaller screens 
-           without changing the internal positions.
-        */
         #scale-wrapper {
             transform-origin: center center;
             display: flex;
             align-items: center;
             justify-content: center;
+            width: 1100px;
+            height: 550px;
         }
 
+        /* Moved the purple dots background here so it only 
+           exists inside the collage area.
+        */
         .main-container {
-            width: 1100px; /* Fixed Width */
-            height: 550px; /* Fixed Height */
-            background: #fff;
+            width: 1100px; 
+            height: 550px;
+            background-color: white;
+            background-image: radial-gradient(#d8b4fe 1px, transparent 1px);
+            background-size: 20px 20px;
             position: relative;
             box-shadow: 0 30px 60px rgba(124, 58, 237, 0.15);
             border-radius: 24px;
             overflow: hidden; 
-            flex-shrink: 0; /* Prevent container from squishing */
+            flex-shrink: 0;
         }
 
         .curtain-prop {
@@ -213,7 +215,6 @@
             pointer-events: none;
         }
 
-        /* Stickers and Audio Logic */
         .audio-sticker {
             position: absolute;
             z-index: 100;
@@ -228,9 +229,8 @@
         .intriguing { bottom: 20px; right: 20px; width: 100px; }
         .workisover { bottom: 50px; right: 150px; width: 100px; }
         .special { bottom: 10px; right: 300px; width: 100px; }
-        .rui-icon { top: 10px; right: 500px; width: 85px; transform: rotate(-10deg); }
+        .rui-icon { top: 10px; right: 480px; width: 85px; transform: rotate(-10deg); }
         
-        /* Washing Machine Layout */
         .washing-machine-container {
             position: absolute;
             bottom: 0px;
@@ -304,7 +304,6 @@
                 Director's Notes: <br> "It's Showtime!" 🎈
             </div>
 
-            <!-- Sparkles -->
             <svg class="sparkle" style="top: 20%; left: 30%; width: 20px;" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z"/></svg>
             <svg class="sparkle" style="top: 40%; left: 10%; width: 15px; animation-delay: 0.5s;" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z"/></svg>
             <svg class="sparkle" style="top: 80%; left: 40%; width: 25px; animation-delay: 0.25s;" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z"/></svg>
@@ -368,9 +367,7 @@
     </div>
 
     <script>
-        // HANDLE AUTO-SCALING FOR ANY SCREEN SIZE
         const wrapper = document.getElementById('scale-wrapper');
-        const canvas = document.getElementById('canvas');
         const baseWidth = 1100;
         const baseHeight = 550;
 
@@ -379,8 +376,8 @@
             const winHeight = window.innerHeight;
             
             const scale = Math.min(
-                (winWidth * 0.95) / baseWidth,
-                (winHeight * 0.95) / baseHeight
+                winWidth / baseWidth,
+                winHeight / baseHeight
             );
             
             wrapper.style.transform = `scale(${scale})`;
@@ -389,7 +386,6 @@
         window.addEventListener('resize', handleResize);
         handleResize();
 
-        // AUDIO LOGIC
         const audioLinks = {
             'intriguing': 'https://raw.githubusercontent.com/Asiandra/comfort-characters/main/MISC/Rui%20iya%20iyaya.mp3',
             'workisover': 'https://raw.githubusercontent.com/Asiandra/comfort-characters/main/MISC/Rui%20super%20grandmaster%20mode%20dayo.mp3',
@@ -402,9 +398,7 @@
             const url = audioLinks[key];
             if (url && url.includes('http')) {
                 const audio = new Audio(url);
-                audio.play().catch(err => {
-                    console.error("Audio error:", err);
-                });
+                audio.play().catch(err => console.error("Audio error:", err));
             }
         }
     </script>
