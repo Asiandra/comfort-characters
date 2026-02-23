@@ -15,11 +15,11 @@
             --washi-tape: rgba(216, 180, 254, 0.6);
         }
 
-        /* Background is set to transparent here so it doesn't 
-           override the background of your host website.
-        */
+        /* Restored the full-screen background pattern */
         body {
-            background: transparent;
+            background-color: var(--soft-purple);
+            background-image: radial-gradient(#d8b4fe 1px, transparent 1px);
+            background-size: 20px 20px;
             margin: 0;
             display: flex;
             align-items: center;
@@ -37,15 +37,10 @@
             height: 550px;
         }
 
-        /* Moved the purple dots background here so it only 
-           exists inside the collage area.
-        */
         .main-container {
             width: 1100px; 
             height: 550px;
-            background-color: white;
-            background-image: radial-gradient(#d8b4fe 1px, transparent 1px);
-            background-size: 20px 20px;
+            background: #fff;
             position: relative;
             box-shadow: 0 30px 60px rgba(124, 58, 237, 0.15);
             border-radius: 24px;
@@ -305,7 +300,7 @@
             </div>
 
             <svg class="sparkle" style="top: 20%; left: 30%; width: 20px;" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z"/></svg>
-            <svg class="sparkle" style="top: 40%; left: 10%; width: 15px; animation-delay: 0.5s;" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z"/></svg>
+            <svg class="sparkle" style="top: 40%; left: 10%; width: 15px; animation-delay: 0.5s;" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0L14.59 14.59L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z"/></svg>
             <svg class="sparkle" style="top: 80%; left: 40%; width: 25px; animation-delay: 0.25s;" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z"/></svg>
 
             <svg class="hanging-line" viewBox="0 0 600 100" preserveAspectRatio="none">
@@ -376,8 +371,8 @@
             const winHeight = window.innerHeight;
             
             const scale = Math.min(
-                winWidth / baseWidth,
-                winHeight / baseHeight
+                (winWidth * 0.95) / baseWidth,
+                (winHeight * 0.95) / baseHeight
             );
             
             wrapper.style.transform = `scale(${scale})`;
