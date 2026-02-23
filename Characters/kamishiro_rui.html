@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kamishiro Rui</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700&family=Gochi+Hand&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --soft-purple: #f3e8ff;
+            --main-purple: #d8b4fe;
+            --accent-purple: #bb88ee;
+            --dark-purple: #a855f7;
+            --washi-tape: rgba(216, 180, 254, 0.6);
+        }
+
+        body {
+            background-color: var(--soft-purple);
+            background-image: radial-gradient(#d8b4fe 1px, transparent 1px);
+            background-size: 20px 20px;
+            font-family: 'Nunito', sans-serif;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        .main-container {
+            width: 95vw;
+            max-width: 1100px;
+            height: 550px;
+            background: #fff;
+            position: relative;
+            box-shadow: 0 30px 60px rgba(124, 58, 237, 0.15);
+            border-radius: 24px;
+            overflow: hidden; 
+        }
+
+        .curtain-prop {
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            width: 220px;
+            height: 220px;
+            background: radial-gradient(circle at top right, #d8b4fe, #9333ea);
+            clip-path: polygon(100% 0, 100% 100%, 0 0);
+            z-index: 10;
+            opacity: 0.25;
+            filter: blur(8px);
+            pointer-events: none;
+        }
+
+        .content-wrapper {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hanging-line {
+            position: absolute;
+            top: 50px;
+            left: 25%;
+            width: 85%;
+            height: 100px;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .art-section {
+            flex: 0 0 50%;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: visible; 
+            z-index: 40; 
+        }
+
+        .stitching, .stitching2 {
+            position: absolute;
+            top: 50%;
+            height: 120%;
+            width: 0;
+            border-left: 4px dashed #fff;
+            z-index: 45;
+            opacity: 0.7;
+            transform: translateY(-50%) rotate(-5deg);
+            pointer-events: none;
+        }
+        .stitching { left: 100px; }
+        .stitching2 { left: 440px; }
+
+        .character-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transform: scale(1.25) rotate(85deg); 
+            filter: drop-shadow(15px 15px 30px rgba(0,0,0,0.2));
+            z-index: 41; 
+        }
+
+        .character-main {
+            width: 100%;
+            height: auto;
+            object-fit: contain;
+        }
+
+        .text-labels {
+            position: absolute;
+            left: 50px;
+            bottom: 40px;
+            z-index: 55; 
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            transform: rotate(-2.5deg);
+        }
+
+        .label {
+            background: white;
+            padding: 10px 25px;
+            color: var(--accent-purple);
+            font-family: 'Fredoka One', cursive;
+            font-size: 1.8rem;
+            box-shadow: 5px 5px 0px rgba(187, 136, 238, 0.4);
+            border-radius: 2px;
+            width: fit-content;
+            position: relative;
+        }
+
+        .label::after {
+            content: "";
+            position: absolute;
+            width: 60px;
+            height: 25px;
+            background: var(--washi-tape);
+            top: -12px;
+            right: -10px;
+            transform: rotate(15deg);
+            backdrop-filter: blur(1px);
+            border-left: 2px solid rgba(255,255,255,0.3);
+            border-right: 2px solid rgba(255,255,255,0.3);
+        }
+
+        .polaroid-section {
+            flex: 1;
+            position: relative;
+            display: flex;
+            align-items: flex-start;
+            padding-top: 130px; 
+            gap: 15px;
+            margin-left: -40px; 
+            z-index: 30; 
+        }
+
+        .polaroid {
+            background: white;
+            padding: 10px 10px 35px 10px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.12);
+            position: relative;
+            width: 160px;
+            flex-shrink: 0;
+            transform-origin: 50% 0%; 
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            z-index: 31;
+        }
+
+        .p1 { transform: rotate(-8deg); top: -10px; }
+        .p2 { transform: rotate(4deg); top: -5px; z-index: 32; }
+        .p3 { transform: rotate(-2deg); top: -20px; }
+
+        .polaroid:hover { transform: rotate(0deg) scale(1.1) !important; z-index: 60 !important; }
+
+        .polaroid img.photo {
+            width: 100%;
+            height: 170px;
+            object-fit: cover;
+            border: 1px solid #f0f0f0;
+        }
+
+        .clip {
+            position: absolute;
+            top: -22px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 45px;
+            height: 45px;
+            background-image: url('https://i.postimg.cc/SKxVxyv0/Rui.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            z-index: 35;
+            pointer-events: none;
+        }
+
+        .audio-sticker {
+            position: absolute;
+            z-index: 100;
+            cursor: pointer;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
+        }
+
+        .audio-sticker:not(.nui):hover {
+            transform: scale(1.1);
+        }
+
+        .audio-sticker:active { 
+            transform: scale(0.9) rotate(-5deg); 
+        }
+
+        .intriguing { bottom: 20px; right: 20px; width: 100px; }
+        .workisover { bottom: 50px; right: 150px; width: 100px; }
+        .special { bottom: 10px; right: 300px; width: 100px; }
+        .rui-icon { top: 10px; right: 500px; width: 85px; transform: rotate(-10deg); }
+
+        .washing-machine-container {
+            position: absolute;
+            bottom: 0px;
+            right: 400px;
+            width: 225px;
+            height: 225px;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .washing-machine-img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.1));
+        }
+
+        .nui { 
+            bottom: 80px; 
+            right: 475px; 
+            width: 75px; 
+            z-index: 95;
+        }
+
+        .nui:hover {
+            animation: washing-machine 0.1s linear infinite;
+        }
+
+        @keyframes washing-machine {
+            from { transform: rotate(0deg) scale(1.1); }
+            to { transform: rotate(360deg) scale(1.1); }
+        }
+
+        .sticky-note {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 120px;
+            height: 120px;
+            background: #EEE1FB;
+            padding: 15px;
+            box-shadow: 5px 5px 15px rgba(0,0,0,0.05);
+            transform: rotate(-10deg);
+            z-index: 5;
+            font-family: 'Gochi Hand', cursive;
+            color: #5E4477;
+            font-size: 1.1rem;
+            line-height: 1.2;
+        }
+
+        .sparkle {
+            position: absolute;
+            color: var(--accent-purple);
+            pointer-events: none;
+            z-index: 42;
+            animation: twinkle 2s infinite ease-in-out;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-container">
+        <div class="curtain-prop"></div>
+        
+        <div class="sticky-note">
+            Director's Notes: <br> "It's Showtime!" 🎈
+        </div>
+
+        <!-- Sparkles -->
+        <svg class="sparkle" style="top: 20%; left: 30%; width: 20px;" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z"/></svg>
+        <svg class="sparkle" style="top: 40%; left: 10%; width: 15px; animation-delay: 0.5s;" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z"/></svg>
+        <svg class="sparkle" style="top: 80%; left: 40%; width: 25px; animation-delay: 0.25s;" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z"/></svg>
+
+        <svg class="hanging-line" viewBox="0 0 600 100" preserveAspectRatio="none">
+            <path d="M-50,10 C150,80 400,80 650,10" fill="none" stroke="#bb88ee" stroke-width="2.5" stroke-dasharray="8,4" />
+        </svg>
+
+        <div class="content-wrapper">
+            <div class="art-section">
+                <div class="stitching"></div>
+                <div class="stitching2"></div>
+                <div class="character-wrapper">
+                    <img src="https://i.postimg.cc/jSNvWwMT/Returning_the_Greeting.png" class="character-main" alt="Rui Main">
+                </div>
+                <div class="text-labels">
+                    <div class="label">GOD</div>
+                    <div class="label" style="margin-left: 20px;">GENERATION</div>
+                    <div class="label" style="background: #bb88ee; color: white;">KAMISHIRO</div>
+                </div>
+            </div>
+
+            <div class="polaroid-section">
+                <div class="polaroid p1">
+                    <div class="clip"></div>
+                    <img src="https://i.postimg.cc/NFJCx3XF/A_Step_Toward_One_s_Dream.png" class="photo">
+                </div>
+                <div class="polaroid p2">
+                    <div class="clip"></div>
+                    <img src="https://i.postimg.cc/sxXw1TNk/Gazing_at_the_Treasure.png" class="photo">
+                </div>
+                <div class="polaroid p3">
+                    <div class="clip"></div>
+                    <img src="https://i.postimg.cc/PJx2NSR0/Operation__Let_s_Meet_Santa.png" class="photo">
+                </div>
+            </div>
+        </div>
+
+        <!-- Washing Machine Background -->
+        <div class="washing-machine-container">
+            <img src="https://i.postimg.cc/15WgwwmJ/Washing_Machine.png" class="washing-machine-img" alt="Washing Machine">
+        </div>
+
+        <!-- Stickers -->
+        <div class="audio-sticker intriguing" onclick="playAudio('intriguing')">
+            <img src="https://i.postimg.cc/KjVT5bZg/Intriguing.png" alt="Rui Intriguing">
+        </div>
+        <div class="audio-sticker workisover" onclick="playAudio('workisover')">
+            <img src="https://i.postimg.cc/5thNptvx/Work_is_over_.png" alt="Work is over">
+        </div>
+        <div class="audio-sticker special" onclick="playAudio('special')">
+            <img src="https://i.postimg.cc/L5PWTCmD/Rui_Stamp.png" alt="Work is over">
+        </div>
+        <div class="audio-sticker rui-icon" onclick="playAudio('rui-icon')">
+            <img src="https://i.postimg.cc/PxqmMPQ4/Rui_Icon.png" style="border-radius: 50%; border: 3px solid white; background: white;" alt="Rui Icon">
+        </div>
+        <div class="audio-sticker nui" onclick="playAudio('nui')">
+            <img src="https://i.postimg.cc/2SchTn2q/Rui_Nui.png" alt="Nui">
+        </div>
+    </div>
+
+    <script>
+        const audioLinks = {
+            'intriguing': 'https://raw.githubusercontent.com/Asiandra/comfort-characters/main/MISC/Rui%20iya%20iyaya.mp3',
+            'workisover': 'https://raw.githubusercontent.com/Asiandra/comfort-characters/main/MISC/Rui%20super%20grandmaster%20mode%20dayo.mp3',
+            'special': 'https://raw.githubusercontent.com/Asiandra/comfort-characters/main/MISC/Rui%20yoyoyo.mp3',
+            'rui-icon': "https://raw.githubusercontent.com/Asiandra/comfort-characters/main/MISC/Rui's%20Dog%20Sounds.mp3",
+            'nui': "https://raw.githubusercontent.com/Asiandra/comfort-characters/main/MISC/Rui%20High%20Pressure%20Washing%20Machine.mp3"
+        };
+
+        function playAudio(key) {
+            const url = audioLinks[key];
+            if (url && url.includes('http')) {
+                const audio = new Audio(url);
+                audio.play().catch(err => {
+                    console.error("Audio error: Make sure the link is a Direct Raw link from GitHub!", err);
+                });
+            } else {
+                console.warn("No valid audio link found for: " + key);
+            }
+        }
+    </script>
+</body>
+</html>
