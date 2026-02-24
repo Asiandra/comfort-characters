@@ -571,7 +571,7 @@
 
     <script>
 
-        const GITHUB_BASE_URL = "https://raw.githubusercontent.com/Asiandra/comfort-characters/main/Characters/";
+        const GITHUB_BASE = "https://raw.githubusercontent.com/Asiandra/comfort-characters/main/Characters/";
         
         const characters = [
             { id: 'bsc', name: "Black Sapphire Cookie", media: "Cookie Run: Kingdom", icon: "https://i.postimg.cc/Tw3DpTgy/BSapphire_Icon.png", fileName: "black_sapphire.html" },
@@ -719,44 +719,46 @@
 
         async function openProfile(char) {
             const id = 'profile-' + char.id;
-            if (registry[id]) { 
-                if (registry[id].classList.contains('minimized')) registry[id].classList.remove('minimized');
-                openWindow(id); 
-                return; 
-            }
+            if (registry[id]) { openWindow(id); return; }
 
             const tpl = document.getElementById('profile-tpl').content.cloneNode(true);
             const win = tpl.querySelector('.window');
-            win.id = id;
-            win.style.top = '50px'; win.style.left = '150px';
+            win.id = id; win.style.top = '40px'; win.style.left = '120px';
             win.querySelector('.win-title').innerText = char.name;
             win.querySelector('.win-icon').innerHTML = `<img src="${char.icon}" class="w-4 h-4">`;
             win.querySelector('.win-close').onclick = () => closeWin(id);
             win.querySelector('.win-min').onclick = () => minimizeWin(id);
-            win.querySelector('.win-max').onclick = () => toggleMaximize(id);
-            win.querySelector('.resizer').onmousedown = (e) => resizeWindow(e, id);
-            win.onmousedown = () => focusWin(id);
             win.querySelector('.title-bar').onmousedown = (e) => dragWindow(e, id);
+            win.querySelector('.resizer').onmousedown = (e) => resizeWindow(e, id);
 
             const iframe = win.querySelector('.profile-iframe');
             const loader = win.querySelector('.loading-overlay');
-
             document.getElementById('desktop').appendChild(win);
             registry[id] = win;
-            setTimeout(() => win.classList.remove('opening'), 10);
+            win.classList.remove('opening');
             focusWin(id);
-            updateTaskbar();
 
-            // Use iframe to contain the site
-            iframe.src = GITHUB_BASE_URL + char.fileName;
-            iframe.onload = () => {
-                loader.classList.add('hidden');
-                iframe.classList.remove('hidden');
-            };
-            
-            iframe.onerror = () => {
-                loader.innerHTML = `<div class="p-4 text-red-600 font-bold">Error loading profile.</div>`;
-            };
+            try {
+                const response = await fetch(GITHUB_BASE + char.file);
+                if (!response.ok) throw new Error("Could not reach database file.");
+                
+                let htmlCode = await response.text();
+                
+                const baseTag = `<base target="_blank">`;
+                if (htmlCode.includes('<head>')) {
+                    htmlCode = htmlCode.replace('<head>', `<head>${baseTag}`);
+                } else {
+                    htmlCode = baseTag + htmlCode;
+                }
+
+                iframe.srcdoc = htmlCode;
+                iframe.onload = () => { 
+                    loader.classList.add('hidden'); 
+                    iframe.classList.remove('hidden'); 
+                };
+            } catch (err) {
+                loader.innerHTML = `<p class="text-red-600 p-4 text-center">Connection Error:<br>${err.message}</p>`;
+            }
         }
 
         function focusWin(id) {
