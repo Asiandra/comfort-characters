@@ -446,10 +446,7 @@
                 Currently, only Proect Sekai\Kamishiro  Rui has content, I'll work on the others soon!<br>
                 ---------------------------<br>
                 NOTES TO SELF<br>
-                - Profiles override the current wallpaper<br>
-                - When clicked, the stickers play the track on the CD player instead of the assigned audio<br>
-                - Profiles do not resize to be the same as the window size<br>
-                - Horizontal scroll bar appears differently from the vertical one
+                - Fandom file explorers and character windows cannot be dragged on mobile
             </div>
             <div class="resizer" onmousedown="resizeWindow(event, 'win-about')" ontouchstart="resizeWindow(event, 'win-about')"></div>
         </div>
@@ -570,8 +567,9 @@
     </div>
 
     <script>
-
-        const GITHUB_BASE = "https://raw.githubusercontent.com/Asiandra/comfort-characters/main/Characters/";
+        // Use jsDelivr as it bypasses GitHub's CORS restrictions for web browsers
+        const GITHUB_CDN = "https://cdn.jsdelivr.net/gh/Asiandra/comfort-characters@main/Characters/";
+        const GITHUB_RAW = "https://raw.githubusercontent.com/Asiandra/comfort-characters/main/Characters/";
         
         const characters = [
             { id: 'bsc', name: "Black Sapphire Cookie", media: "Cookie Run: Kingdom", icon: "https://i.postimg.cc/Tw3DpTgy/BSapphire_Icon.png", fileName: "black_sapphire.html" },
@@ -728,6 +726,7 @@
             win.querySelector('.win-icon').innerHTML = `<img src="${char.icon}" class="w-4 h-4">`;
             win.querySelector('.win-close').onclick = () => closeWin(id);
             win.querySelector('.win-min').onclick = () => minimizeWin(id);
+            win.querySelector('.win-max').onclick = () => toggleMaximize(id);
             win.querySelector('.title-bar').onmousedown = (e) => dragWindow(e, id);
             win.querySelector('.resizer').onmousedown = (e) => resizeWindow(e, id);
 
@@ -739,10 +738,28 @@
             focusWin(id);
 
             try {
-                const response = await fetch(GITHUB_BASE + char.file);
-                if (!response.ok) throw new Error("Could not reach database file.");
-                
-                let htmlCode = await response.text();
+                // FIXED: Use char.fileName because char.file was undefined
+                const fileToLoad = char.fileName || char.file;
+                if (!fileToLoad) throw new Error("No file path defined for this character.");
+
+                // Helper to try fetching a specific URL
+                async function tryFetch(url) {
+                    try {
+                        const response = await fetch(url, { cache: 'no-cache' });
+                        if (!response.ok) return null;
+                        return await response.text();
+                    } catch (e) {
+                        return null;
+                    }
+                }
+
+                // Try CDN first (reliable), then Raw GitHub (backup)
+                let htmlCode = await tryFetch(GITHUB_CDN + fileToLoad);
+                if (!htmlCode) {
+                    htmlCode = await tryFetch(GITHUB_RAW + fileToLoad);
+                }
+
+                if (!htmlCode) throw new Error("Could not reach database file.");
                 
                 const baseTag = `<base target="_blank">`;
                 if (htmlCode.includes('<head>')) {
