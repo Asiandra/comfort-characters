@@ -18,8 +18,10 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
             margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
             user-select: none;
         }
 
@@ -28,6 +30,9 @@
             padding: 10px;
             border: 3px solid;
             border-color: var(--border-light) var(--border-dark) var(--border-dark) var(--border-light);
+            width: max-content;
+            max-width: 100%;
+            box-sizing: border-box;
         }
 
         #header {
@@ -83,6 +88,8 @@
             grid-template-rows: repeat(10, var(--cell-size));
             border: 3px solid;
             border-color: var(--border-dark) var(--border-light) var(--border-light) var(--border-dark);
+            max-width: 100%;
+            overflow: hidden;
         }
 
         .cell {
@@ -128,6 +135,17 @@
             font-weight: bold;
             height: 20px;
             color: white;
+            font-size: 14px;
+        }
+
+        @media (max-width: 380px) {
+            :root {
+                --cell-size: 30px;
+            }
+            #reset-btn {
+                width: 38px;
+                height: 38px;
+            }
         }
     </style>
 </head>
