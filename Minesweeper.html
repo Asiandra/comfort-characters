@@ -20,9 +20,18 @@
             align-items: center;
             min-height: 100vh;
             margin: 0;
-            padding: 20px;
+            padding: 10px;
             box-sizing: border-box;
             user-select: none;
+            overflow-x: hidden;
+        }
+
+        #scaler {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transform-origin: center;
+            transition: transform 0.2s ease-out;
         }
 
         #game-container {
@@ -31,7 +40,6 @@
             border: 3px solid;
             border-color: var(--border-light) var(--border-dark) var(--border-dark) var(--border-light);
             width: max-content;
-            max-width: 100%;
             box-sizing: border-box;
         }
 
@@ -88,8 +96,6 @@
             grid-template-rows: repeat(10, var(--cell-size));
             border: 3px solid;
             border-color: var(--border-dark) var(--border-light) var(--border-light) var(--border-dark);
-            max-width: 100%;
-            overflow: hidden;
         }
 
         .cell {
@@ -137,32 +143,23 @@
             color: white;
             font-size: 14px;
         }
-
-        @media (max-width: 380px) {
-            :root {
-                --cell-size: 30px;
-            }
-            #reset-btn {
-                width: 38px;
-                height: 38px;
-            }
-        }
     </style>
 </head>
 <body>
 
-<div id="game-container">
-    <div id="header">
-        <div id="mine-count" class="lcd-display">010</div>
-        <button id="reset-btn" aria-label="Reset Game"></button>
-        <div id="timer" class="lcd-display">000</div>
+<div id="scaler">
+    <div id="game-container">
+        <div id="header">
+            <div id="mine-count" class="lcd-display">010</div>
+            <button id="reset-btn" aria-label="Reset Game"></button>
+            <div id="timer" class="lcd-display">000</div>
+        </div>
+        <div id="grid"></div>
+        <div id="message"></div>
     </div>
-    <div id="grid"></div>
-    <div id="message"></div>
 </div>
 
 <script>
-    // Custom images
     const ASSETS = {
         MINE: 'https://i.postimg.cc/B6LbBjrk/Robonene.png',
         FLAG: '🚩',
@@ -188,6 +185,26 @@
     const mineDisplay = document.getElementById('mine-count');
     const timerDisplay = document.getElementById('timer');
     const message = document.getElementById('message');
+    const scaler = document.getElementById('scaler');
+    const container = document.getElementById('game-container');
+
+    function handleResize() {
+        const padding = 20;
+        const availableWidth = window.innerWidth - padding;
+        const availableHeight = window.innerHeight - padding;
+        const containerWidth = container.offsetWidth;
+        const containerHeight = container.offsetHeight;
+
+        const scale = Math.min(
+            availableWidth / containerWidth,
+            availableHeight / containerHeight,
+            1
+        );
+
+        scaler.style.transform = `scale(${scale})`;
+    }
+
+    window.addEventListener('resize', handleResize);
 
     function setContent(element, value) {
         element.innerHTML = '';
@@ -262,6 +279,8 @@
                 }
             }
         }
+        
+        setTimeout(handleResize, 10);
     }
 
     function countMines(r, c) {
@@ -288,16 +307,12 @@
 
     function handleLeftClick(r, c) {
         if (gameOver || board[r][c].isRevealed || board[r][c].isFlagged) return;
-        
         startTimer();
-
         if (board[r][c].isMine) {
             endGame(false);
             return;
         }
-
         revealCell(r, c);
-
         if (revealedCount === (ROWS * COLS) - MINES) {
             endGame(true);
         }
@@ -305,10 +320,8 @@
 
     function handleRightClick(r, c) {
         if (gameOver || board[r][c].isRevealed) return;
-        
         const cell = board[r][c];
         const el = document.getElementById(`cell-${r}-${c}`);
-        
         cell.isFlagged = !cell.isFlagged;
         if (cell.isFlagged) {
             setContent(el, ASSETS.FLAG);
@@ -325,12 +338,10 @@
     function revealCell(r, c) {
         const cell = board[r][c];
         if (cell.isRevealed || cell.isFlagged) return;
-
         cell.isRevealed = true;
         revealedCount++;
         const el = document.getElementById(`cell-${r}-${c}`);
         el.classList.add('revealed');
-
         if (cell.neighborMines > 0) {
             el.textContent = cell.neighborMines;
             el.classList.add(`n${cell.neighborMines}`);
@@ -351,7 +362,6 @@
         clearInterval(timerInterval);
         setContent(resetBtn, won ? ASSETS.WIN : ASSETS.DEAD);
         message.textContent = won ? "WE HAVE A WINNER!" : "ROBONENE JUMPSCARE!";
-
         for (let r = 0; r < ROWS; r++) {
             for (let c = 0; c < COLS; c++) {
                 const cell = board[r][c];
