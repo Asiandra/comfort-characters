@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hinomori Shiho</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --color-1: #B5B7AD; 
+            --color-2: #8B2D1B; 
+            --color-3: #EAD8B1; 
+            --color-4: #2D3A2F; 
+            --accent-shiho: #BD2;
+            --text-color: #5E6F11;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://i.postimg.cc/sDXmdCk1/Shiho-Background.png');
+            background-repeat: repeat-x;
+            background-size: auto 100%;
+            z-index: -1;
+            animation: horizontalMove 40s linear infinite;
+        }
+
+        @keyframes horizontalMove {
+            from {
+                transform: translateX(0);
+            }
+            to {
+                transform: translateX(-1200px); 
+            }
+        }
+
+        .bg-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(221, 238, 145, 0.4);
+            z-index: -1;
+        }
+
+        .viewport-guard {
+            width: 95vw;
+            height: 95vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        .scaling-container {
+            width: 1000px;
+            max-width: 100%;
+            max-height: 100%;
+            aspect-ratio: 1000 / 500;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .aesthetic-container {
+            width: 1000px;
+            height: 500px;
+            background-image: url('https://i.postimg.cc/XXMThNsj/Container-Background.png');
+            background-size: cover;
+            background-position: center;
+            border: 1px solid #BD2;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+            padding: 40px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            flex-shrink: 0;
+            transform-origin: center center;
+            transform: scale(var(--scale-factor, 1));
+        }
+
+        .vertical-title {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            writing-mode: vertical-rl;
+            text-orientation: upright;
+            width: 1em; 
+            white-space: nowrap;
+            word-break: break-all;
+            font-size: 3.5rem;
+            font-weight: 900;
+            line-height: 1;
+            letter-spacing: 0.2em;
+            opacity: 0.15;
+            color: var(--text-color);
+            pointer-events: none;
+            z-index: 1;
+            text-align: center;
+        }
+
+        .image-gallery-left { position: relative; height: 100%; z-index: 2; }
+        .masked-image {
+            position: absolute;
+            background-image: url('https://i.postimg.cc/7YkrBpgz/With_Slight_Embarassment.png');
+            background-size: cover;
+            border: 2px solid var(--accent-shiho);
+        }
+
+        .frame-1 { width: 300px; height: 180px; top: 0px; left: -10px; background-size: 250%; background-position: 40% 10%; z-index: 2; }
+        .frame-2 { width: 120px; height: 180px; top: -20px; left: 300px; background-size: 500%; background-position: 80% 0%; z-index: 1; }
+        .frame-3 { width: 160px; height: 200px; bottom: 10px; left: 10px; background-size: 450%; background-position: 35% 100%; z-index: 2; }
+        .frame-4 { width: 240px; height: 200px; bottom: 30px; left: 190px; background-size: 300%; background-position: 76% 100%; z-index: 2; }
+
+        .content-right { display: flex; flex-direction: column; justify-content: space-between; position: relative; z-index: 2; }
+        .palette-grid {
+            position: absolute; top: -10px; left: 70px;
+            display: grid; grid-template-columns: repeat(2, 40px); gap: 10px;
+        }
+        .palette-box { width: 40px; height: 40px; border-radius: 2px; }
+
+        .square-img-box {
+            width: 100px; height: 100px;
+            border: 1px solid var(--accent-shiho);
+            border-radius: 4px;
+            background-repeat: no-repeat;
+        }
+
+        .img-1 { background-image: url('https://i.postimg.cc/N0L39YcB/Unbeatable_Gaze.png'); background-size: 500%; background-position: 62.5% 20%; }
+        .img-2 { background-image: url('https://i.postimg.cc/bJt4gTrx/Lunchtime_Chat.png'); background-size: 400%; background-position: 47.5% 15%; }
+
+        .description-text { font-size: 0.85rem; line-height: 1.6; max-width: 250px; margin-left: auto; text-align: right; color: var(--text-color); }
+        .stamp-container { position: absolute; right: 0; bottom: 0; display: flex; flex-direction: column; align-items: flex-end; gap: 10px; }
+        .stamp { width: 100px; height: 100px; object-fit: contain; }
+    </style>
+</head>
+<body>
+
+    <div class="animated-bg"></div>
+    <div class="bg-overlay"></div>
+
+    <div class="viewport-guard">
+        <div class="scaling-container" id="scaler">
+            <div class="aesthetic-container" id="box">
+                <div class="vertical-title">日野森志歩</div>
+
+                <div class="image-gallery-left">
+                    <div class="masked-image frame-1"></div>
+                    <div class="masked-image frame-2"></div>
+                    <div class="masked-image frame-3"></div>
+                    <div class="masked-image frame-4"></div>
+                </div>
+
+                <div class="content-right">
+                    <div class="flex justify-between items-start">
+                        <div class="palette-grid">
+                            <div class="palette-box" style="background: var(--color-1);"></div>
+                            <div class="palette-box" style="background: var(--color-2);"></div>
+                            <div class="palette-box" style="background: var(--color-3);"></div>
+                            <div class="palette-box" style="background: var(--color-4);"></div>
+                        </div>
+                        <div class="description-text">
+                            Hinomori Shiho is a second-year student at Miyamasuzaka Girls Academy. She is the bassist of Leo/need.
+                        </div>
+                    </div>
+
+                    <div class="flex justify-center gap-10">
+                        <div class="flex gap-4">
+                            <div class="square-img-box img-1"></div>
+                            <div class="square-img-box img-2"></div>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-between items-end">
+                        <div class="description-text" style="text-align: left; margin-left: 0;">
+                            Leo/need's bassist. She is determined about music and is often misunderstood due to being a lone wolf who dislikes clinginess. Shiho deeply cares for her band members, alongside who she has chased and achieved the dream of becoming professional musicians.
+                        </div>
+                        <div class="stamp-container">
+                            <img src="https://i.postimg.cc/cCdT3MnF/Don_t_say_I_didn_t_warn_you.png" class="stamp">
+                            <img src="https://i.postimg.cc/j2RvfQ78/Shiho.png" class="stamp">
+                            <img src="https://i.postimg.cc/4yXwcb9P/It_s_really_pretty.png" class="stamp">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function updateScale() {
+            const scaler = document.getElementById('scaler');
+            const box = document.getElementById('box');
+            if (!scaler || !box) return;
+            const scale = scaler.offsetWidth / 1000;
+            box.style.setProperty('--scale-factor', scale);
+        }
+
+        window.addEventListener('resize', updateScale);
+        window.onload = updateScale;
+    </script>
+</body>
+</html>
