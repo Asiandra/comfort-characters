@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tenma Tsukasa</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&display=swap');
+
+        :root {
+            --genshin-tsukasa: #fb0;
+            --genshin-gold: #ffcc33;
+            --genshin-bg: #f0f0f0;
+            --genshin-dark: #3b4254;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1a1a1a;
+            margin: 0;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .gacha-container {
+            position: relative;
+            width: 100%;
+            max-width: 1200px;
+            aspect-ratio: 16 / 9;
+            background: linear-gradient(135deg, #ffffff 0%, #FFDD80 100%);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            border: 4px solid #333;
+        }
+
+        .bg-pattern {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 40%;
+            height: 100%;
+            background: linear-gradient(110deg, transparent 20%, #ffbb0030 20.5%, #fb0 100%);
+            z-index: 1;
+        }
+
+        .decorative-line {
+            position: absolute;
+            top: 15%;
+            left: 5%;
+            width: 30%;
+            border-bottom: 2px dashed #ccc;
+            z-index: 2;
+        }
+
+        .character-main {
+            position: absolute;
+            right: 25%;
+            top: 0%;
+            height: 125%;
+            z-index: 5;
+            filter: drop-shadow(0 0 20px #ffbb0080);
+            transition: transform 0.3s ease;
+        }
+
+        .character-sub {
+            position: absolute;
+            z-index: 4;
+            height: 60%;
+            transition: transform 0.3s ease;
+        }
+
+        .char-1 {
+            right: 0%;
+            top: 2.5%;
+            height: 50%;
+        }
+
+        .char-2 {
+            right: 7.5%;
+            bottom: 15%;
+            height: 50%;
+        }
+
+        .char-3 {
+            right: 5%;
+            bottom: -5%;
+            height: 50%;
+        }
+
+        .banner-tag {
+            position: absolute;
+            top: 0;
+            left: 0;
+            background: var(--genshin-tsukasa);
+            color: white;
+            padding: 8px 30px 8px 15px;
+            font-weight: 00;
+            border-bottom-right-radius: 30px;
+            z-index: 10;
+            font-size: 0.9rem;
+        }
+
+        .wish-title {
+            position: absolute;
+            top: 10%;
+            left: 5%;
+            z-index: 10;
+        }
+
+        .wish-title h1 {
+            font-size: 4rem;
+            color: #333;
+            margin: 0;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .wish-title h2 {
+            font-size: 4.5rem;
+            color: var(--genshin-tsukasa);
+            margin: -5px 0 0 0;
+            font-weight: 700;
+            letter-spacing: -1px;
+        }
+
+        .guarantee-box {
+            position: absolute;
+            left: 5%;
+            top: 45%;
+            background: #ffbb0070;
+            color: white;
+            padding: 15px 25px;
+            max-width: 350px;
+            font-size: 1rem;
+            line-height: 1.2;
+            z-index: 10;
+            clip-path: polygon(0 0, 100% 0, 95% 100%, 0% 100%);
+        }
+
+        .info-text {
+            position: absolute;
+            left: 5%;
+            top: 62%;
+            max-width: 350px;
+            color: #666;
+            font-size: 0.9rem;
+            z-index: 10;
+        }
+
+        .name-plate {
+            position: absolute;
+            right: 28%;
+            bottom: 12%;
+            z-index: 15;
+            text-align: center;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .name-main {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin: 0;
+            line-height: 1;
+        }
+
+        .stars {
+            color: var(--genshin-gold);
+            font-size: 1.5rem;
+            letter-spacing: 2px;
+        }
+
+        .sub-title {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 2px 10px;
+            border-radius: 4px;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .up-badge {
+            display: inline-block;
+            background: var(--genshin-gold);
+            color: #333;
+            font-size: 0.8rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            vertical-align: middle;
+            margin-left: 5px;
+            font-weight: 800;
+        }
+
+        .action-buttons {
+            position: absolute;
+            bottom: 5%;
+            right: 5%;
+            z-index: 20;
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            background: #ece5d8;
+            border: 2px solid #d3bc8e;
+            color: #745131;
+            padding: 10px 40px;
+            border-radius: 50px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 0 #d3bc8e;
+        }
+
+        .btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #d3bc8e;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="gacha-container">
+        <div class="bg-pattern"></div>
+        <div class="decorative-line"></div>
+        <div class="banner-tag">Tsukasa Wish</div>
+
+        <div class="wish-title">
+            <h1>Wanderlust</h1>
+            <h2>Invocation</h2>
+        </div>
+
+        <div class="guarantee-box">
+            ✦ Every 10 wishes is guaranteed to include at least one 4-star or higher item.
+        </div>
+
+        <div class="info-text">
+            Standard wishes have no time limit.
+        </div>
+
+        <!-- five Star -->
+        <div class="character-main">
+            <img src="https://i.postimg.cc/MpLLHmky/Tsukasa_Main.png" alt="Reaching for the Heights" class="h-full" onerror="this.parentElement.innerHTML='<div class=\'h-full w-96 placeholder-img\'>MAIN ART</div>'">
+        </div>
+
+        <!-- Four Star -->
+        <div class="character-sub char-1">
+            <img src="https://i.postimg.cc/jS1124Vq/Tsukasa_3.png" alt="Sub 1" class="h-full" onerror="this.parentElement.innerHTML='<div class=\'h-full w-64 placeholder-img\'>4-STAR 1</div>'">
+        </div>
+        <div class="character-sub char-2">
+            <img src="https://i.postimg.cc/Cx225H33/Tsukasa_2.png" alt="Sub 2" class="h-full" onerror="this.parentElement.innerHTML='<div class=\'h-full w-64 placeholder-img\'>4-STAR 2</div>'">
+        </div>
+        <div class="character-sub char-3">
+            <img src="https://i.postimg.cc/NjnnFkhw/Tsukasa_1.png" alt="Sub 3" class="h-full" onerror="this.parentElement.innerHTML='<div class=\'h-full w-64 placeholder-img\'>4-STAR 3</div>'">
+        </div>
+
+        <!-- Name Plate for Main Char -->
+        <div class="name-plate">
+            <div class="flex items-center justify-center">
+                <p class="name-main">Tsukasa</p>
+                <span class="up-badge">UP!</span>
+            </div>
+            <div class="stars">★★★★★</div>
+            <span class="sub-title">World Future Star</span>
+        </div>
+
+        <!-- Buttons -->
+        <div class="action-buttons">
+            <button class="btn" onclick="showMsg('1 Pull')">Wish x1</button>
+            <button class="btn" style="background: #e9e5dc; color: #a4783e;" onclick="showMsg('10 Pull')">Wish x10</button>
+        </div>
+    </div>
+
+    <!-- You Gambled! -->
+    <div id="msg-box" class="fixed inset-0 flex items-center justify-center bg-black/50 hidden z-50">
+        <div class="bg-white p-8 rounded-lg shadow-xl text-center">
+            <p id="msg-text" class="text-xl font-bold text-gray-800 mb-4"></p>
+            <button onclick="hideMsg()" style="background: #ffbb00; color: white;" class="px-6 py-2 rounded">Close</button>
+        </div>
+    </div>
+
+    <script>
+        function showMsg(text) {
+            document.getElementById('msg-text').innerText = "Gambled: " + text + "\n(Pretend there's stuff here)";
+            document.getElementById('msg-box').classList.remove('hidden');
+        }
+
+        function hideMsg() {
+            document.getElementById('msg-box').classList.add('hidden');
+        }
+
+        document.addEventListener('mousemove', (e) => {
+            const moveX = (e.clientX - window.innerWidth / 2) * 0.01;
+            const moveY = (e.clientY - window.innerHeight / 2) * 0.01;
+
+            document.querySelector('.character-main').style.transform = `translate(${moveX * 2}px, ${moveY * 2}px)`;
+            document.querySelectorAll('.character-sub').forEach((el, i) => {
+                el.style.transform = `translate(${moveX * (i + 1)}px, ${moveY * (i + 1)}px)`;
+            });
+        });
+    </script>
+</body>
+
+</html>
