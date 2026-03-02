@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doki Doki Fantasista SQUAD</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@700&display=swap');
+
+        :root {
+            --pink-bg: #ffbde1;
+            --pink-accent: #ff70bd;
+            --shadow: rgba(0, 0, 0, 0.1);
+            --font-main: 'Comfortaa', cursive;
+            --game-width: 1280;
+            --game-height: 720;
+        }
+
+        * {
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-main);
+        }
+
+        .stage {
+            position: relative;
+            width: calc(var(--game-width) * 1px);
+            height: calc(var(--game-height) * 1px);
+            background-color: #fff;
+            overflow: hidden;
+            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+            flex-shrink: 0;
+        }
+
+        /* Animated Background */
+        .game-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://i.postimg.cc/FzDxjZ7v/DDLC_BG.png');
+            background-repeat: repeat;
+            background-size: 1000px;
+            animation: backgroundScroll 40s linear infinite;
+        }
+
+        @keyframes backgroundScroll {
+            from { background-position: 0 0; }
+            to { background-position: 500px 500px; }
+        }
+
+        /* Side Menu Oval */
+        .menu-container {
+            position: absolute;
+            left: -420px;
+            top: -180px;
+            height: 1080px;
+            width: 800px; 
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            pointer-events: none;
+        }
+
+        .menu-background-asset {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 100%;
+            background-image: url('https://i.postimg.cc/qBbnxg1B/DDLC-Circle.png');
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            filter: drop-shadow(15px 0 20px rgba(0,0,0,0.05));
+            z-index: -1;
+        }
+
+        /* Icon Circle */
+        .icon-circle {
+            position: absolute;
+            top: 150px;
+            left: 600px;
+            width: 250px;
+            height: 250px;
+            background-image: url('https://i.postimg.cc/qBbnxg1B/DDLC-Circle.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 101;
+        }
+
+        /* Menu Content Positioning */
+        .menu-content {
+            padding-left: 500px;
+            pointer-events: auto;
+            margin-top: 300px;
+        }
+
+        .menu-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .menu-item {
+            font-size: 34px;
+            color: var(--pink-accent);
+            margin: 10px 0;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            text-shadow: 2px 2px 0px white;
+            display: inline-block;
+        }
+
+        .menu-item:hover {
+            color: #d13d8d;
+            transform: scale(1.1) translateX(20px);
+        }
+
+        /* Character Stuff */
+        .character-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        .char {
+            position: absolute;
+            animation: float 5s ease-in-out infinite;
+        }
+        
+        .char img {
+            display: block;
+            filter: drop-shadow(10px 0 15px rgba(0, 0, 0, 0.15));
+            height: 100%; 
+            width: auto;
+        }
+        
+        /* Character Placement */
+        .char-rui {
+            top: 25%;
+            right: 60px;
+            height: 1000px;
+            z-index: 14;
+            animation-delay: 0s;
+        }
+        
+        .char-akt {
+            top: 10%;
+            right: 300px; 
+            height: 600px;
+            z-index: 12;
+            animation-delay: 1s;
+        }
+        
+        .char-touya {
+            top: 7.5%;
+            right: 475px; 
+            height: 600px;
+            z-index: 11;
+            animation-delay: 1.5s;
+        }
+        
+        .char-tks {
+            top: 25%;
+            left: 125px; 
+            height: 750px;
+            z-index: 13;
+            animation-delay: 0.5s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(0.5deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="stage" id="stage">
+        <div class="game-container">
+            <div class="menu-container">
+                <div class="menu-background-asset"></div>
+                
+                <div class="icon-circle">
+                    <div class="icon-content">
+                        <img src="https://i.postimg.cc/qBbnxg1B/DDLC-Circle.png" style="width: 100%; opacity: 0.1;" alt="">
+                    </div>
+                </div>
+
+                <div class="menu-content">
+                    <nav class="menu-list">
+                        <div class="menu-item">New Game</div><br>
+                        <div class="menu-item">Load Game</div><br>
+                        <div class="menu-item">Settings</div><br>
+                        <div class="menu-item">Help</div><br>
+                        <div class="menu-item">Exit</div>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- Characters Layer -->
+            <div class="character-layer">
+                <div class="char char-rui"><img src="https://i.postimg.cc/vZQs8Hdr/Kamishiro_Rui.png" alt="Rui"></div>
+                <div class="char char-akt"><img src="https://i.postimg.cc/3xKTrJHy/Shinonome_Akito.png" alt="Akito"></div>
+                <div class="char char-touya"><img src="https://i.postimg.cc/sgVrfDR5/Aoyagi_Touya.png" alt="Touya"></div>
+                <div class="char char-tks"><img src="https://i.postimg.cc/cLsS14Nw/Tenma_Tsukasa.png" alt="Tsukasa"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const stage = document.getElementById('stage');
+        const baseWidth = 1280;
+        const baseHeight = 720;
+
+        function resizeStage() {
+            const winWidth = window.innerWidth;
+            const winHeight = window.innerHeight;
+            
+            const scale = Math.min(winWidth / baseWidth, winHeight / baseHeight);
+            
+            stage.style.transform = `scale(${scale})`;
+        }
+
+        window.addEventListener('resize', resizeStage);
+        resizeStage();
+
+        const menuItems = document.querySelectorAll('.menu-item');
+        menuItems.forEach(item => {
+            item.addEventListener('click', () => {
+                item.style.transform = "scale(0.95)";
+                setTimeout(() => item.style.transform = "", 100);
+            });
+        });
+    </script>
+</body>
+</html>
